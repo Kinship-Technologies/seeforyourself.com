@@ -174,34 +174,6 @@ export default function App() {
       }
     `}</style>
     <PasswordGate open={gateOpen} onClose={() => setGateOpen(false)} />
-    <button
-      onClick={() => setGateOpen(true)}
-      style={{
-        position: 'fixed',
-        bottom: '2rem',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 100,
-        fontFamily: "'Times New Roman', Times, serif",
-        fontSize: 'clamp(22px, 2.5vw, 36px)',
-        fontWeight: 400,
-        color: '#111',
-        background: 'none',
-        border: '1px solid #111',
-        borderRadius: '50%',
-        width: '2.4em',
-        height: '2.4em',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        animation: 'subtlePulse 2s ease-in-out infinite',
-        padding: 0,
-        lineHeight: 1,
-      }}
-    >
-      ?
-    </button>
     <Canvas
       camera={{ position: [0, 0, 50], fov: 45 }}
       gl={{ antialias: true, toneMapping: 3 }}
@@ -253,6 +225,7 @@ export default function App() {
               width: '100%',
               height: '100vh',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
               pointerEvents: 'none',
@@ -260,6 +233,31 @@ export default function App() {
             }}
           >
             <p style={textStyle}>A camera with no name.<br />For everything you want to remember.</p>
+            <button
+              onClick={() => setGateOpen(true)}
+              style={{
+                marginTop: '3rem',
+                fontFamily: "'Times New Roman', Times, serif",
+                fontSize: 'clamp(22px, 2.5vw, 36px)',
+                fontWeight: 400,
+                color: '#111',
+                background: 'none',
+                border: '1px solid #111',
+                borderRadius: '50%',
+                width: '2.4em',
+                height: '2.4em',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                pointerEvents: 'auto',
+                animation: 'subtlePulse 2s ease-in-out infinite',
+                padding: 0,
+                lineHeight: 1,
+              }}
+            >
+              ?
+            </button>
           </div>
         </Scroll>
       </ScrollControls>

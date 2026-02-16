@@ -4,41 +4,10 @@ import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 
 const SIZE = 1024
-const C = SIZE / 2
-const PI2 = Math.PI * 2
-
-// --------------- Image loading ---------------
-
-function loadImage(src) {
-  const img = new Image()
-  img.src = src
-  return img
-}
-
-function drawImageInCircle(ctx, img, alpha) {
-  if (!img || !img.complete || !img.naturalWidth) return
-  ctx.save()
-  ctx.globalAlpha = alpha
-  ctx.beginPath()
-  ctx.arc(C, C, C, 0, PI2)
-  ctx.clip()
-
-  const iw = img.naturalWidth
-  const ih = img.naturalHeight
-  const scale = Math.max(SIZE / iw, SIZE / ih)
-  const dw = iw * scale
-  const dh = ih * scale
-  ctx.drawImage(img, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh)
-
-  ctx.restore()
-}
-
-// --------------- Main hook ---------------
 
 export default function useOzTexture() {
   const canvasRef = useRef(null)
   const textureRef = useRef(null)
-  const imagesRef = useRef(null)
   const scroll = useScroll()
 
   if (!canvasRef.current) {
@@ -56,39 +25,11 @@ export default function useOzTexture() {
     textureRef.current = tex
   }
 
-  if (!imagesRef.current) {
-    imagesRef.current = {
-      scene: loadImage('/images/scene.jpg'),
-    }
-  }
-
   useFrame(() => {
     const ctx = canvasRef.current.getContext('2d')
-    const offset = scroll.offset
-    const images = imagesRef.current
-
     ctx.clearRect(0, 0, SIZE, SIZE)
-
-    // Visible 0.50–0.82
-    if (offset < 0.50 || offset >= 0.82) {
-      textureRef.current.needsUpdate = true
-      return
-    }
-
-    // Fade in 0.50–0.56, hold, fade out 0.76–0.82
-    let alpha = 1.0
-    if (offset < 0.56) alpha = smoothstep((offset - 0.50) / 0.06)
-    else if (offset > 0.76) alpha = 1.0 - smoothstep((offset - 0.76) / 0.06)
-
-    drawImageInCircle(ctx, images.scene, alpha)
-
     textureRef.current.needsUpdate = true
   })
 
   return textureRef.current
-}
-
-function smoothstep(t) {
-  const c = Math.max(0, Math.min(1, t))
-  return c * c * (3 - 2 * c)
 }
