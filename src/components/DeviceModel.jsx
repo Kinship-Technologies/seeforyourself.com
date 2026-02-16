@@ -1,7 +1,8 @@
 import { useRef, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useGLTF, useScroll, useTexture } from '@react-three/drei'
+import { useGLTF, useScroll } from '@react-three/drei'
 import * as THREE from 'three'
+import useOzTexture from './useOzTexture'
 
 // --------------- Liquid Lens Shader ---------------
 const liquidLensVertex = /* glsl */ `
@@ -15,7 +16,6 @@ void main() {
 const liquidLensFragment = /* glsl */ `
 uniform sampler2D uTexture;
 uniform float uTime;
-uniform float uZoom;
 uniform float uReveal;
 uniform float uTilt;
 varying vec2 vUv;
@@ -27,57 +27,32 @@ void main() {
 
   if (dist > 0.5) discard;
 
-  // Subtle field curvature
+  // Minimal field curvature
   float r2 = dist * dist;
-  float r4 = r2 * r2;
-  float distortion = 1.0 + 0.08 * r2 + 0.02 * r4;
+  float distortion = 1.0 + 0.01 * r2;
   vec2 duv = uv * distortion;
 
   // Liquid lens breathing
-  float breath = 1.0 + 0.006 * sin(uTime * 0.5) + 0.003 * sin(uTime * 1.3);
+  float breath = 1.0 + 0.003 * sin(uTime * 0.5) + 0.001 * sin(uTime * 1.3);
   duv *= breath;
 
-  // Viewfinder crop — show a section of the full image
-  float viewScale = 0.4;
-  duv *= viewScale;
-
-  // Aspect ratio correction (1080x1347 portrait)
-  duv.x *= 1.247;
-
-  // Pan with tilt — camera scanning the scene
-  float panRange = 0.3;
-  duv.y -= panRange * (1.0 - uTilt);
+  // Subtle parallax from tilt
+  duv.y -= 0.02 * (1.0 - uTilt);
 
   duv += center;
 
-  // Zoom control
-  duv = center + (duv - center) / (1.0 + uZoom * 0.3);
+  vec3 color = texture2D(uTexture, duv).rgb;
 
-  // Chromatic aberration
-  float chromaAmount = 0.002 * r2 * 3.0;
-  vec2 dir = dist > 0.001 ? normalize(uv) : vec2(0.0);
-  float rv = texture2D(uTexture, duv + dir * chromaAmount).r;
-  float gv = texture2D(uTexture, duv).g;
-  float bv = texture2D(uTexture, duv - dir * chromaAmount * 0.8).b;
-  vec3 color = vec3(rv, gv, bv);
+  // Reduce contrast 20%, brighten 40%
+  color = mix(vec3(0.5), color, 0.8);
+  color *= 1.4;
 
-  // Analog color
-  color = pow(color, vec3(0.97, 1.0, 1.04));
-  color.r *= 1.03;
-  color.b *= 0.95;
+  // Thin glass rim — only the outermost ~3% of radius darkens
+  float rimStart = 0.468;
+  float rimT = smoothstep(rimStart, 0.5, dist);
+  color = mix(color, vec3(0.06), rimT * rimT);
 
-  // Lifted shadows
-  color = mix(vec3(0.015, 0.012, 0.02), color, 0.98 + 0.02 * color);
-
-  // Gentle saturation
-  float luma = dot(color, vec3(0.299, 0.587, 0.114));
-  color = mix(vec3(luma), color, 1.08);
-
-  // Minimal natural vignette
-  float vig = 1.0 - 0.08 * r2 * 4.0;
-  color *= vig;
-
-  // Clean edge
+  // Alpha: fully opaque throughout, soft anti-alias at edge
   float alpha = smoothstep(0.5, 0.49, dist);
   alpha *= uReveal;
 
@@ -92,17 +67,13 @@ export default function DeviceModel() {
   const scroll = useScroll()
 
   const bodyMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#050505'),
+    color: new THREE.Color('#080808'),
     metalness: 0.05,
-    roughness: 0.12,
-    clearcoat: 0.6,
-    clearcoatRoughness: 0.08,
-    reflectivity: 0.6,
-    transmission: 0.05,
-    thickness: 3.0,
-    ior: 1.58,
-    envMapIntensity: 1.0,
-    transparent: true,
+    roughness: 0.15,
+    clearcoat: 0.5,
+    clearcoatRoughness: 0.1,
+    reflectivity: 0.4,
+    envMapIntensity: 0.6,
   }), [])
 
   const lensBarrelMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
@@ -116,7 +87,6 @@ export default function DeviceModel() {
     thickness: 2.0,
     ior: 1.58,
     envMapIntensity: 0.8,
-    transparent: true,
     side: THREE.DoubleSide,
   }), [])
 
@@ -141,30 +111,15 @@ export default function DeviceModel() {
     if (!groupRef.current) return
     const offset = scroll.offset
 
-    // Model fade: dissolve in 0.08–0.18, visible through sequence, dissolve out 0.83–0.93
-    let modelOpacity
-    if (offset < 0.08) {
-      modelOpacity = 0
-    } else if (offset < 0.18) {
-      modelOpacity = (offset - 0.08) / 0.1
-    } else if (offset < 0.83) {
-      modelOpacity = 1
-    } else if (offset < 0.93) {
-      modelOpacity = 1 - (offset - 0.83) / 0.1
-    } else {
-      modelOpacity = 0
-    }
+    // Hide model during text frames so they never overlap
+    groupRef.current.visible = offset > 0.06 && offset < 0.92
 
-    bodyMaterial.opacity = modelOpacity
-    lensBarrelMaterial.opacity = modelOpacity
-    groupRef.current.visible = modelOpacity > 0.001
-
-    // Tilt: model starts upright, tilts to show screen (0.55–0.75)
+    // Tilt: model starts upright, tilts to show screen (0.45–0.60)
     let targetRotX
-    if (offset <= 0.55) {
+    if (offset <= 0.45) {
       targetRotX = Math.PI / 2
-    } else if (offset <= 0.75) {
-      const t = (offset - 0.55) / 0.2
+    } else if (offset <= 0.60) {
+      const t = (offset - 0.45) / 0.15
       const smooth = t * t * (3 - 2 * t)
       targetRotX = THREE.MathUtils.lerp(Math.PI / 2, 0, smooth)
     } else {
@@ -184,22 +139,16 @@ export default function DeviceModel() {
 
 // --------------- Screen Face (liquid lens + glass) ---------------
 function ScreenFace() {
-  const shaderRef = useRef()
-  const sceneTexture = useTexture('/images/scene.jpg')
+  const ozTexture = useOzTexture()
   const scroll = useScroll()
 
   const shaderMaterial = useMemo(() => {
-    sceneTexture.colorSpace = THREE.SRGBColorSpace
-    sceneTexture.minFilter = THREE.LinearFilter
-    sceneTexture.magFilter = THREE.LinearFilter
-
-    return new THREE.ShaderMaterial({
+    const mat = new THREE.ShaderMaterial({
       vertexShader: liquidLensVertex,
       fragmentShader: liquidLensFragment,
       uniforms: {
-        uTexture: { value: sceneTexture },
+        uTexture: { value: ozTexture },
         uTime: { value: 0 },
-        uZoom: { value: 0 },
         uReveal: { value: 0 },
         uTilt: { value: 0 },
       },
@@ -207,18 +156,20 @@ function ScreenFace() {
       side: THREE.DoubleSide,
       depthWrite: false,
     })
-  }, [sceneTexture])
+    mat.toneMapped = false
+    return mat
+  }, [ozTexture])
 
   const glassMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#000000'),
+    color: new THREE.Color('#ffffff'),
     metalness: 0,
     roughness: 0.02,
-    transmission: 0.98,
-    thickness: 0.3,
-    ior: 1.52,
+    transmission: 0.99,
+    thickness: 0.1,
+    ior: 1.45,
     clearcoat: 1.0,
     clearcoatRoughness: 0.03,
-    envMapIntensity: 0.6,
+    envMapIntensity: 0.3,
     transparent: true,
     side: THREE.FrontSide,
     depthWrite: false,
@@ -229,12 +180,13 @@ function ScreenFace() {
 
     const offset = scroll.offset
 
-    // Reveal: image appears as screen tilts toward user (0.6–0.75)
-    const reveal = offset > 0.6 ? Math.min((offset - 0.6) / 0.15, 1) : 0
+    // Reveal: image appears as screen tilts toward user (0.50–0.62), ramps down 0.86–0.90
+    let reveal = offset > 0.50 ? Math.min((offset - 0.50) / 0.12, 1) : 0
+    if (offset > 0.86) reveal = Math.max(0, 1 - (offset - 0.86) / 0.04)
     shaderMaterial.uniforms.uReveal.value += (reveal - shaderMaterial.uniforms.uReveal.value) * 0.08
 
-    // Tilt for image panning (0.55–0.75)
-    const tilt = offset > 0.55 ? Math.min((offset - 0.55) / 0.2, 1) : 0
+    // Tilt for image panning (0.45–0.60)
+    const tilt = offset > 0.45 ? Math.min((offset - 0.45) / 0.15, 1) : 0
     const smoothTilt = tilt * tilt * (3 - 2 * tilt)
     shaderMaterial.uniforms.uTilt.value += (smoothTilt - shaderMaterial.uniforms.uTilt.value) * 0.06
   })
@@ -243,12 +195,7 @@ function ScreenFace() {
     <group>
       <mesh position={[0, 0, 6.5]} renderOrder={2}>
         <circleGeometry args={[25.5, 128]} />
-        <primitive ref={shaderRef} object={shaderMaterial} attach="material" />
-      </mesh>
-
-      <mesh position={[0, 0, 6.8]} renderOrder={3}>
-        <circleGeometry args={[25.5, 128]} />
-        <primitive object={glassMaterial} attach="material" />
+        <primitive object={shaderMaterial} attach="material" />
       </mesh>
     </group>
   )
