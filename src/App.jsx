@@ -134,6 +134,15 @@ function PasswordGate({ open, onClose }) {
           gap: '1.2rem',
         }}
       >
+        <img
+          src="/images/keyoflife.png"
+          alt=""
+          style={{
+            width: 'clamp(32px, 4vw, 56px)',
+            height: 'auto',
+            opacity: 0.6,
+          }}
+        />
         <input
           autoFocus
           type="password"
