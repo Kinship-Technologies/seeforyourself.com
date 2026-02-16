@@ -4,10 +4,19 @@ import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 
 const SIZE = 1024
+const C = SIZE / 2
+const PI2 = Math.PI * 2
+
+function loadImage(src) {
+  const img = new Image()
+  img.src = src
+  return img
+}
 
 export default function useOzTexture() {
   const canvasRef = useRef(null)
   const textureRef = useRef(null)
+  const imageRef = useRef(null)
   const scroll = useScroll()
 
   if (!canvasRef.current) {
@@ -25,11 +34,48 @@ export default function useOzTexture() {
     textureRef.current = tex
   }
 
+  if (!imageRef.current) {
+    imageRef.current = loadImage('/images/eden.jpg')
+  }
+
   useFrame(() => {
     const ctx = canvasRef.current.getContext('2d')
+    const offset = scroll.offset
+    const img = imageRef.current
+
     ctx.clearRect(0, 0, SIZE, SIZE)
+
+    if (offset < 0.50 || offset >= 0.82 || !img || !img.complete || !img.naturalWidth) {
+      textureRef.current.needsUpdate = true
+      return
+    }
+
+    let alpha = 1.0
+    if (offset < 0.56) alpha = smoothstep((offset - 0.50) / 0.06)
+    else if (offset > 0.76) alpha = 1.0 - smoothstep((offset - 0.76) / 0.06)
+
+    ctx.save()
+    ctx.globalAlpha = alpha
+    ctx.beginPath()
+    ctx.arc(C, C, C, 0, PI2)
+    ctx.clip()
+
+    const iw = img.naturalWidth
+    const ih = img.naturalHeight
+    const scale = Math.max(SIZE / iw, SIZE / ih)
+    const dw = iw * scale
+    const dh = ih * scale
+    ctx.drawImage(img, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh)
+
+    ctx.restore()
+
     textureRef.current.needsUpdate = true
   })
 
   return textureRef.current
+}
+
+function smoothstep(t) {
+  const c = Math.max(0, Math.min(1, t))
+  return c * c * (3 - 2 * c)
 }
