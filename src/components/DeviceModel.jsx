@@ -1,9 +1,8 @@
-import { useRef, useEffect, useMemo, useContext } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF, useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import useOzTexture from './useOzTexture'
-import { VersionContext } from '../App'
 
 // --------------- Liquid Lens Shader ---------------
 const liquidLensVertex = /* glsl */ `
@@ -66,7 +65,6 @@ export default function DeviceModel() {
   const groupRef = useRef()
   const { scene } = useGLTF('/models/talis.glb')
   const scroll = useScroll()
-  const version = useContext(VersionContext)
 
   const bodyMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
     color: new THREE.Color('#080808'),
@@ -113,38 +111,22 @@ export default function DeviceModel() {
     if (!groupRef.current) return
     const offset = scroll.offset
 
-    if (version === 'V3') {
-      // V3: visibility 0.035–0.92
-      groupRef.current.visible = offset > 0.035 && offset < 0.92
+    // Hide model during text frames so they never overlap
+    groupRef.current.visible = offset > 0.06 && offset < 0.92
 
-      // Tilt: model starts upright, tilts face-on (0.26–0.34)
-      let targetRotX
-      if (offset <= 0.26) {
-        targetRotX = Math.PI / 2
-      } else if (offset <= 0.34) {
-        const t = (offset - 0.26) / 0.08
-        const smooth = t * t * (3 - 2 * t)
-        targetRotX = THREE.MathUtils.lerp(Math.PI / 2, 0, smooth)
-      } else {
-        targetRotX = 0
-      }
-      groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.08
+    // Tilt: model starts upright, tilts to show screen (0.45–0.60)
+    let targetRotX
+    if (offset <= 0.45) {
+      targetRotX = Math.PI / 2
+    } else if (offset <= 0.60) {
+      const t = (offset - 0.45) / 0.15
+      const smooth = t * t * (3 - 2 * t)
+      targetRotX = THREE.MathUtils.lerp(Math.PI / 2, 0, smooth)
     } else {
-      // V2: original timings
-      groupRef.current.visible = offset > 0.06 && offset < 0.92
-
-      let targetRotX
-      if (offset <= 0.45) {
-        targetRotX = Math.PI / 2
-      } else if (offset <= 0.60) {
-        const t = (offset - 0.45) / 0.15
-        const smooth = t * t * (3 - 2 * t)
-        targetRotX = THREE.MathUtils.lerp(Math.PI / 2, 0, smooth)
-      } else {
-        targetRotX = 0
-      }
-      groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.08
+      targetRotX = 0
     }
+
+    groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.08
   })
 
   return (
@@ -157,8 +139,7 @@ export default function DeviceModel() {
 
 // --------------- Screen Face (liquid lens + glass) ---------------
 function ScreenFace() {
-  const version = useContext(VersionContext)
-  const ozTexture = useOzTexture(version)
+  const ozTexture = useOzTexture()
   const scroll = useScroll()
 
   const shaderMaterial = useMemo(() => {
@@ -199,26 +180,15 @@ function ScreenFace() {
 
     const offset = scroll.offset
 
-    if (version === 'V3') {
-      // V3: reveal ramp 0.29–0.33, ramp down 0.86–0.90
-      let reveal = offset > 0.29 ? Math.min((offset - 0.29) / 0.04, 1) : 0
-      if (offset > 0.86) reveal = Math.max(0, 1 - (offset - 0.86) / 0.04)
-      shaderMaterial.uniforms.uReveal.value += (reveal - shaderMaterial.uniforms.uReveal.value) * 0.08
+    // Reveal: image appears as screen tilts toward user (0.50–0.62), ramps down 0.86–0.90
+    let reveal = offset > 0.50 ? Math.min((offset - 0.50) / 0.12, 1) : 0
+    if (offset > 0.86) reveal = Math.max(0, 1 - (offset - 0.86) / 0.04)
+    shaderMaterial.uniforms.uReveal.value += (reveal - shaderMaterial.uniforms.uReveal.value) * 0.08
 
-      // Tilt for image panning (0.26–0.34)
-      const tilt = offset > 0.26 ? Math.min((offset - 0.26) / 0.08, 1) : 0
-      const smoothTilt = tilt * tilt * (3 - 2 * tilt)
-      shaderMaterial.uniforms.uTilt.value += (smoothTilt - shaderMaterial.uniforms.uTilt.value) * 0.06
-    } else {
-      // V2: original timings
-      let reveal = offset > 0.50 ? Math.min((offset - 0.50) / 0.12, 1) : 0
-      if (offset > 0.86) reveal = Math.max(0, 1 - (offset - 0.86) / 0.04)
-      shaderMaterial.uniforms.uReveal.value += (reveal - shaderMaterial.uniforms.uReveal.value) * 0.08
-
-      const tilt = offset > 0.45 ? Math.min((offset - 0.45) / 0.15, 1) : 0
-      const smoothTilt = tilt * tilt * (3 - 2 * tilt)
-      shaderMaterial.uniforms.uTilt.value += (smoothTilt - shaderMaterial.uniforms.uTilt.value) * 0.06
-    }
+    // Tilt for image panning (0.45–0.60)
+    const tilt = offset > 0.45 ? Math.min((offset - 0.45) / 0.15, 1) : 0
+    const smoothTilt = tilt * tilt * (3 - 2 * tilt)
+    shaderMaterial.uniforms.uTilt.value += (smoothTilt - shaderMaterial.uniforms.uTilt.value) * 0.06
   })
 
   return (
