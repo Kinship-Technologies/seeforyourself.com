@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 
-const SIZE = 1024
+const SIZE = Math.min(1024, window.innerWidth > 768 ? 1024 : 512)
 const C = SIZE / 2
 const PI2 = Math.PI * 2
 

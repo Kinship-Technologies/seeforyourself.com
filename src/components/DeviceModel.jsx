@@ -201,4 +201,3 @@ function ScreenFace() {
   )
 }
 
-useGLTF.preload('/models/talis.glb')

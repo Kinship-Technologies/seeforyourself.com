@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useCallback, useEffect } from 'react'
+import { useMemo, useRef, useState, useCallback, useEffect, Suspense } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { ScrollControls, useScroll, Scroll, Environment, ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
@@ -204,7 +204,7 @@ export default function App() {
       ref={audioRef}
       src="/audio/windowlicker.mp3"
       loop
-      preload="auto"
+      preload="none"
       style={{ display: 'none' }}
     />
     <style>{`
@@ -259,7 +259,9 @@ export default function App() {
         <directionalLight position={[10, 10, 5]} intensity={0.6} castShadow />
         <directionalLight position={[-5, 5, -5]} intensity={0.2} />
 
-        <DeviceModel />
+        <Suspense fallback={null}>
+          <DeviceModel />
+        </Suspense>
 
         <ContactShadows
           position={[0, -1.5, 0]}
