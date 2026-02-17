@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useCallback } from 'react'
+import { useMemo, useRef, useState, useCallback, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { ScrollControls, useScroll, Scroll, Environment, ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
@@ -60,7 +60,7 @@ function CameraRig() {
   return null
 }
 
-function TextController({ text1Ref, text2Ref }) {
+function TextController({ text1Ref, text2Ref, btnRef }) {
   const scroll = useScroll()
 
   useFrame(() => {
@@ -70,12 +70,32 @@ function TextController({ text1Ref, text2Ref }) {
     if (text1Ref.current) {
       const o1 = offset < 0.02 ? 1 : offset < 0.07 ? 1 - (offset - 0.02) / 0.05 : 0
       text1Ref.current.style.opacity = o1
+      if (o1 > 0) {
+        const p = text1Ref.current.querySelector('p')
+        if (p) {
+          const rect = text1Ref.current.getBoundingClientRect()
+          const shift = (window.innerHeight - p.offsetHeight) / 2 - rect.top
+          p.style.transform = `translateY(${shift}px)`
+        }
+      }
     }
 
-    // Text 2: fades in 0.94–1.00, after model is fully gone
+    // Text 2 + button: fades in 0.94–1.00
+    const o2 = offset < 0.94 ? 0 : offset < 1.00 ? (offset - 0.94) / 0.06 : 1
     if (text2Ref.current) {
-      const o2 = offset < 0.94 ? 0 : offset < 1.00 ? (offset - 0.94) / 0.06 : 1
       text2Ref.current.style.opacity = o2
+      if (o2 > 0) {
+        const p = text2Ref.current.querySelector('p')
+        if (p) {
+          const rect = text2Ref.current.getBoundingClientRect()
+          const shift = (window.innerHeight - p.offsetHeight) / 2 - rect.top
+          p.style.transform = `translateY(${shift}px)`
+        }
+      }
+    }
+    if (btnRef.current) {
+      btnRef.current.style.opacity = o2
+      btnRef.current.style.pointerEvents = o2 > 0.1 ? 'auto' : 'none'
     }
   })
 
@@ -84,7 +104,7 @@ function TextController({ text1Ref, text2Ref }) {
 
 const textStyle = {
   fontFamily: "'Times New Roman', Times, serif",
-  fontSize: 'clamp(28px, 3.5vw, 54px)',
+  fontSize: 'clamp(20px, 3.5vw, 54px)',
   fontWeight: 400,
   color: '#111',
   letterSpacing: '-0.02em',
@@ -134,15 +154,6 @@ function PasswordGate({ open, onClose }) {
           gap: '1.2rem',
         }}
       >
-        <img
-          src="/images/keyoflife.png"
-          alt=""
-          style={{
-            width: 'clamp(32px, 4vw, 56px)',
-            height: 'auto',
-            opacity: 0.6,
-          }}
-        />
         <input
           autoFocus
           type="password"
@@ -172,15 +183,20 @@ function PasswordGate({ open, onClose }) {
 export default function App() {
   const text1Ref = useRef()
   const text2Ref = useRef()
+  const btnRef = useRef()
   const [gateOpen, setGateOpen] = useState(false)
   const audioRef = useRef(null)
-  const [audioReady, setAudioReady] = useState(false)
+  const audioStarted = useRef(false)
 
-  const startAudio = useCallback(() => {
-    if (audioRef.current && !audioReady) {
-      audioRef.current.play().then(() => setAudioReady(true)).catch(() => {})
+  useEffect(() => {
+    const tryPlay = () => {
+      if (audioStarted.current || !audioRef.current) return
+      audioRef.current.play().then(() => { audioStarted.current = true }).catch(() => {})
     }
-  }, [audioReady])
+    const events = ['wheel', 'touchstart', 'pointerdown', 'keydown']
+    events.forEach(e => document.addEventListener(e, tryPlay, { once: true, capture: true, passive: true }))
+    return () => events.forEach(e => document.removeEventListener(e, tryPlay, { capture: true }))
+  }, [])
 
   return (
     <>
@@ -191,17 +207,6 @@ export default function App() {
       preload="auto"
       style={{ display: 'none' }}
     />
-    {!audioReady && (
-      <div
-        onClick={startAudio}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 50,
-          cursor: 'pointer',
-        }}
-      />
-    )}
     <style>{`
       @keyframes subtlePulse {
         0%, 100% { opacity: 0.35; }
@@ -209,6 +214,37 @@ export default function App() {
       }
     `}</style>
     <PasswordGate open={gateOpen} onClose={() => setGateOpen(false)} />
+    <button
+      ref={btnRef}
+      onClick={() => setGateOpen(true)}
+      style={{
+        position: 'fixed',
+        bottom: '4vh',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 100,
+        fontFamily: "'Times New Roman', Times, serif",
+        fontSize: 'clamp(22px, 2.5vw, 36px)',
+        fontWeight: 400,
+        color: '#111',
+        background: 'none',
+        border: '1px solid #111',
+        borderRadius: '50%',
+        width: '2.4em',
+        height: '2.4em',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        animation: 'subtlePulse 2s ease-in-out infinite',
+        padding: 0,
+        lineHeight: 1,
+        opacity: 0,
+        pointerEvents: 'none',
+      }}
+    >
+      ?
+    </button>
     <Canvas
       camera={{ position: [0, 0, 50], fov: 45 }}
       gl={{ antialias: true, toneMapping: 3 }}
@@ -217,7 +253,7 @@ export default function App() {
     >
       <ScrollControls pages={5} damping={0.2}>
         <CameraRig />
-        <TextController text1Ref={text1Ref} text2Ref={text2Ref} />
+        <TextController text1Ref={text1Ref} text2Ref={text2Ref} btnRef={btnRef} />
 
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 5]} intensity={0.6} castShadow />
@@ -242,10 +278,8 @@ export default function App() {
               left: 0,
               width: '100%',
               height: '100vh',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
               pointerEvents: 'none',
+              boxSizing: 'border-box',
             }}
           >
             <p style={textStyle}>The forbidden fruit was never the apple.</p>
@@ -259,42 +293,12 @@ export default function App() {
               left: 0,
               width: '100%',
               height: '100vh',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
               pointerEvents: 'none',
+              boxSizing: 'border-box',
               opacity: 0,
             }}
           >
             <p style={textStyle}>A camera with no name.<br />For everything you want to remember.</p>
-            <button
-              onClick={() => setGateOpen(true)}
-              style={{
-                position: 'absolute',
-                bottom: '4vh',
-                marginTop: '0',
-                fontFamily: "'Times New Roman', Times, serif",
-                fontSize: 'clamp(22px, 2.5vw, 36px)',
-                fontWeight: 400,
-                color: '#111',
-                background: 'none',
-                border: '1px solid #111',
-                borderRadius: '50%',
-                width: '2.4em',
-                height: '2.4em',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                pointerEvents: 'auto',
-                animation: 'subtlePulse 2s ease-in-out infinite',
-                padding: 0,
-                lineHeight: 1,
-              }}
-            >
-              ?
-            </button>
           </div>
         </Scroll>
       </ScrollControls>

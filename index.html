@@ -3,12 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>See For Yourself — Talis by Kinship Technologies</title>
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.png" />
+    <meta name="description" content="A camera by Kinship." />
+    <meta property="og:title" content="See for Yourself." />
+    <meta property="og:description" content="A camera by Kinship." />
+    <meta property="og:image" content="https://kinship.inc/favicon.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kinship.inc" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="See for Yourself." />
+    <meta name="twitter:description" content="A camera by Kinship." />
+    <meta name="twitter:image" content="https://kinship.inc/favicon.png" />
+    <title>See for Yourself.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <script>
+      (function(){
+        function setVH(){document.documentElement.style.setProperty('--app-vh',window.innerHeight+'px')}
+        setVH();
+        window.addEventListener('resize',setVH);
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
