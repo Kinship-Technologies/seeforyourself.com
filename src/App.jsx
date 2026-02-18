@@ -253,11 +253,8 @@ export default function App() {
   const audioRef = useRef(null)
   const audioStarted = useRef(false)
 
-  if (!siteUnlocked) {
-    return <SiteGate onUnlock={() => setSiteUnlocked(true)} />
-  }
-
   useEffect(() => {
+    if (!siteUnlocked) return
     const tryPlay = () => {
       if (audioStarted.current || !audioRef.current) return
       audioRef.current.play().then(() => { audioStarted.current = true }).catch(() => {})
@@ -265,7 +262,11 @@ export default function App() {
     const events = ['wheel', 'touchstart', 'pointerdown', 'keydown']
     events.forEach(e => document.addEventListener(e, tryPlay, { once: true, capture: true, passive: true }))
     return () => events.forEach(e => document.removeEventListener(e, tryPlay, { capture: true }))
-  }, [])
+  }, [siteUnlocked])
+
+  if (!siteUnlocked) {
+    return <SiteGate onUnlock={() => setSiteUnlocked(true)} />
+  }
 
   return (
     <>
