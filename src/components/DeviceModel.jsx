@@ -67,34 +67,41 @@ export default function DeviceModel() {
   const { scene } = useGLTF('/models/talis.glb')
   const scroll = useScroll()
 
+  // Translucent polycarbonate shell — polished exterior, black paint interior
   const bodyMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#080808'),
-    metalness: 0.05,
-    roughness: 0.15,
-    clearcoat: 0.5,
-    clearcoatRoughness: 0.1,
-    reflectivity: 0.4,
-    envMapIntensity: 0.6,
+    color: new THREE.Color('#111111'),
+    metalness: 0,
+    roughness: 0.06,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.02,
+    transmission: 0.35,
+    thickness: 1.8,
+    attenuationColor: new THREE.Color('#050505'),
+    attenuationDistance: 0.4,
+    ior: 1.585,
+    envMapIntensity: 1.0,
+    side: THREE.FrontSide,
   }), [])
 
+  // Glass lens barrel
   const lensBarrelMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#080808'),
-    metalness: 0.05,
-    roughness: 0.08,
-    clearcoat: 0.5,
-    clearcoatRoughness: 0.06,
-    reflectivity: 0.7,
-    transmission: 0.35,
-    thickness: 2.0,
-    ior: 1.58,
-    envMapIntensity: 0.8,
+    color: new THREE.Color('#ffffff'),
+    metalness: 0,
+    roughness: 0.0,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.01,
+    transmission: 0.92,
+    thickness: 1.2,
+    ior: 1.52,
+    envMapIntensity: 1.2,
     side: THREE.DoubleSide,
   }), [])
 
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
-        child.geometry = mergeVertices(child.geometry)
+        // Merge split vertices with tolerance, then recompute smooth normals
+        child.geometry = mergeVertices(child.geometry, 0.0001)
         child.geometry.computeVertexNormals()
         child.castShadow = true
         child.receiveShadow = true
@@ -155,27 +162,15 @@ function ScreenFace() {
         uTilt: { value: 0 },
       },
       transparent: true,
-      side: THREE.DoubleSide,
+      side: THREE.FrontSide,
       depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
     })
     mat.toneMapped = false
     return mat
   }, [ozTexture])
-
-  const glassMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#ffffff'),
-    metalness: 0,
-    roughness: 0.02,
-    transmission: 0.99,
-    thickness: 0.1,
-    ior: 1.45,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.03,
-    envMapIntensity: 0.3,
-    transparent: true,
-    side: THREE.FrontSide,
-    depthWrite: false,
-  }), [])
 
   useFrame((state) => {
     shaderMaterial.uniforms.uTime.value = state.clock.elapsedTime

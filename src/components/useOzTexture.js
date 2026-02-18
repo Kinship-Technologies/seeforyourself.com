@@ -17,6 +17,7 @@ export default function useOzTexture() {
   const canvasRef = useRef(null)
   const textureRef = useRef(null)
   const imageRef = useRef(null)
+  const wasDrawing = useRef(false)
   const scroll = useScroll()
 
   if (!canvasRef.current) {
@@ -39,16 +40,23 @@ export default function useOzTexture() {
   }
 
   useFrame(() => {
-    const ctx = canvasRef.current.getContext('2d')
     const offset = scroll.offset
     const img = imageRef.current
 
-    ctx.clearRect(0, 0, SIZE, SIZE)
-
+    // Skip all canvas work when image shouldn't be visible
     if (offset < 0.50 || offset >= 0.82 || !img || !img.complete || !img.naturalWidth) {
-      textureRef.current.needsUpdate = true
+      if (wasDrawing.current) {
+        // Clear once when transitioning out, then stop updating
+        const ctx = canvasRef.current.getContext('2d')
+        ctx.clearRect(0, 0, SIZE, SIZE)
+        textureRef.current.needsUpdate = true
+        wasDrawing.current = false
+      }
       return
     }
+
+    const ctx = canvasRef.current.getContext('2d')
+    ctx.clearRect(0, 0, SIZE, SIZE)
 
     let alpha = 1.0
     if (offset < 0.56) alpha = smoothstep((offset - 0.50) / 0.06)
@@ -70,6 +78,7 @@ export default function useOzTexture() {
     ctx.restore()
 
     textureRef.current.needsUpdate = true
+    wasDrawing.current = true
   })
 
   return textureRef.current
