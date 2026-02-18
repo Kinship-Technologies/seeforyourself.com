@@ -2,6 +2,7 @@ import { useRef, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF, useScroll } from '@react-three/drei'
 import * as THREE from 'three'
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
 import useOzTexture from './useOzTexture'
 
 // --------------- Liquid Lens Shader ---------------
@@ -93,6 +94,7 @@ export default function DeviceModel() {
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
+        child.geometry = mergeVertices(child.geometry)
         child.geometry.computeVertexNormals()
         child.castShadow = true
         child.receiveShadow = true

@@ -180,13 +180,82 @@ function PasswordGate({ open, onClose }) {
   )
 }
 
+function SiteGate({ onUnlock }) {
+  const [value, setValue] = useState('')
+  const [error, setError] = useState(false)
+
+  const handleSubmit = useCallback((e) => {
+    e.preventDefault()
+    if (value.toLowerCase().trim() === 'forbidden') {
+      sessionStorage.setItem('site_unlocked', '1')
+      onUnlock()
+    } else {
+      setError(true)
+      setTimeout(() => setError(false), 1200)
+    }
+  }, [value, onUnlock])
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 99999,
+        background: '#fff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '1.2rem',
+        }}
+      >
+        <input
+          autoFocus
+          type="password"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder=""
+          style={{
+            fontFamily: "'Times New Roman', Times, serif",
+            fontSize: 'clamp(22px, 3vw, 42px)',
+            textAlign: 'center',
+            background: 'none',
+            border: 'none',
+            borderBottom: error ? '1px solid #c44' : '1px solid #999',
+            outline: 'none',
+            color: '#111',
+            letterSpacing: '0.1em',
+            padding: '0.3em 0',
+            width: '8em',
+            transition: 'border-color 0.3s',
+          }}
+        />
+      </form>
+    </div>
+  )
+}
+
 export default function App() {
+  const [siteUnlocked, setSiteUnlocked] = useState(
+    () => sessionStorage.getItem('site_unlocked') === '1'
+  )
   const text1Ref = useRef()
   const text2Ref = useRef()
   const btnRef = useRef()
   const [gateOpen, setGateOpen] = useState(false)
   const audioRef = useRef(null)
   const audioStarted = useRef(false)
+
+  if (!siteUnlocked) {
+    return <SiteGate onUnlock={() => setSiteUnlocked(true)} />
+  }
 
   useEffect(() => {
     const tryPlay = () => {
