@@ -8,17 +8,16 @@ function CameraRig() {
   const scroll = useScroll()
   const { camera } = useThree()
 
-  // Camera: zoom into lens → side profile → screen → zoom out
+  // Text 1 fades fast, model zooms in quickly after
   const keyframes = useMemo(() => [
-    { at: 0.00, pos: [0, 0, 50],        target: [0, 0, 0] },
-    { at: 0.08, pos: [0, 0, 50],        target: [0, 0, 0] },
-    { at: 0.20, pos: [0.5, 1.5, 5.5],   target: [0, 0.3, 0] },
-    { at: 0.35, pos: [0, 0.8, 5],       target: [0, 0.3, 0] },
-    { at: 0.50, pos: [0, 0.3, 5],       target: [0, 0, 0] },
-    { at: 0.65, pos: [0, 0, 4.2],       target: [0, 0, 0] },
-    { at: 0.86, pos: [0, 0, 4.2],       target: [0, 0, 0] },
-    { at: 0.94, pos: [0, 0, 50],        target: [0, 0, 0] },
-    { at: 1.00, pos: [0, 0, 50],        target: [0, 0, 0] },
+    { at: 0.00, pos: [0, 0, 50],      target: [0, 0, 0] },
+    { at: 0.08, pos: [0, 0, 50],      target: [0, 0, 0] },
+    { at: 0.22, pos: [1, 2.5, 5.5],   target: [0, 0.6, 0] },
+    { at: 0.36, pos: [0, 0.3, 5],     target: [0, 0.3, 0] },
+    { at: 0.52, pos: [0, 0.3, 4.2],   target: [0, 0, 0] },
+    { at: 0.86, pos: [0, 0.3, 4.2],   target: [0, 0, 0] },
+    { at: 0.94, pos: [0, 0, 50],      target: [0, 0, 0] },
+    { at: 1.00, pos: [0, 0, 50],      target: [0, 0, 0] },
   ], [])
 
   const smoothPos = useRef(new THREE.Vector3(0, 0, 50))

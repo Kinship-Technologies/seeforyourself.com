@@ -43,7 +43,7 @@ export default function useOzTexture() {
     const img = imageRef.current
 
     // Skip all canvas work when image shouldn't be visible
-    if (offset < 0.58 || offset >= 0.90 || !img || !img.complete || !img.naturalWidth) {
+    if (offset < 0.50 || offset >= 0.82 || !img || !img.complete || !img.naturalWidth) {
       if (wasDrawing.current) {
         // Clear once when transitioning out, then stop updating
         const ctx = canvasRef.current.getContext('2d')
@@ -58,8 +58,8 @@ export default function useOzTexture() {
     ctx.clearRect(0, 0, SIZE, SIZE)
 
     let alpha = 1.0
-    if (offset < 0.66) alpha = smoothstep((offset - 0.58) / 0.08)
-    else if (offset > 0.82) alpha = 1.0 - smoothstep((offset - 0.82) / 0.08)
+    if (offset < 0.56) alpha = smoothstep((offset - 0.50) / 0.06)
+    else if (offset > 0.76) alpha = 1.0 - smoothstep((offset - 0.76) / 0.06)
 
     ctx.save()
     ctx.globalAlpha = alpha
