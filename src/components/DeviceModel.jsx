@@ -51,10 +51,6 @@ void main() {
 
   vec3 color = texture2D(uTexture, duv).rgb;
 
-  // Reduce contrast 20%, brighten 40%
-  color = mix(vec3(0.5), color, 0.8);
-  color *= 1.4;
-
   // Thin glass rim — only the outermost ~3% of radius darkens
   float rimStart = 0.468;
   float rimT = smoothstep(rimStart, 0.5, dist);

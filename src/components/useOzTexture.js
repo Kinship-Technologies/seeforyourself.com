@@ -29,7 +29,6 @@ export default function useOzTexture() {
 
   if (!textureRef.current) {
     const tex = new THREE.CanvasTexture(canvasRef.current)
-    tex.colorSpace = THREE.SRGBColorSpace
     tex.minFilter = THREE.LinearFilter
     tex.magFilter = THREE.LinearFilter
     textureRef.current = tex
