@@ -2,8 +2,16 @@ import { useRef, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF, useScroll } from '@react-three/drei'
 import * as THREE from 'three'
-import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import useOzTexture from './useOzTexture'
+
+// Configure Draco decoder for compressed GLB
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/')
+
+// Tell drei's useGLTF to use our Draco-enabled loader
+useGLTF.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/')
 
 // --------------- Liquid Lens Shader ---------------
 const liquidLensVertex = /* glsl */ `
@@ -64,45 +72,47 @@ void main() {
 // --------------- Device Model ---------------
 export default function DeviceModel() {
   const groupRef = useRef()
-  const { scene } = useGLTF('/models/talis.glb')
+  const { scene } = useGLTF('/models/talis_smooth.glb')
   const scroll = useScroll()
 
-  // Translucent polycarbonate shell — polished exterior, black paint interior
+  // Glossy black polycarbonate — piano black with translucent edges
   const bodyMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#111111'),
-    metalness: 0,
-    roughness: 0.06,
+    color: new THREE.Color('#0a0a0a'),
+    metalness: 0.02,
+    roughness: 0.05,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.02,
-    transmission: 0.35,
-    thickness: 1.8,
-    attenuationColor: new THREE.Color('#050505'),
-    attenuationDistance: 0.4,
+    clearcoatRoughness: 0.03,
+    reflectivity: 1.0,
+    transmission: 0.15,
+    thickness: 2.5,
+    attenuationColor: new THREE.Color('#000000'),
+    attenuationDistance: 0.3,
     ior: 1.585,
-    envMapIntensity: 1.0,
+    envMapIntensity: 1.5,
+    sheen: 0,
     side: THREE.FrontSide,
   }), [])
 
-  // Glass lens barrel
+  // Glass lens barrel — clear glass with high reflections
   const lensBarrelMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#ffffff'),
+    color: new THREE.Color('#e8f0f0'),
     metalness: 0,
     roughness: 0.0,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.01,
-    transmission: 0.92,
-    thickness: 1.2,
+    clearcoatRoughness: 0.005,
+    reflectivity: 1.0,
+    transmission: 0.85,
+    thickness: 1.5,
+    attenuationColor: new THREE.Color('#88cccc'),
+    attenuationDistance: 2.0,
     ior: 1.52,
-    envMapIntensity: 1.2,
+    envMapIntensity: 1.8,
     side: THREE.DoubleSide,
   }), [])
 
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
-        // Merge split vertices with tolerance, then recompute smooth normals
-        child.geometry = mergeVertices(child.geometry, 0.0001)
-        child.geometry.computeVertexNormals()
         child.castShadow = true
         child.receiveShadow = true
 
@@ -146,7 +156,7 @@ export default function DeviceModel() {
   )
 }
 
-// --------------- Screen Face (liquid lens + glass) ---------------
+// --------------- Screen Face (liquid lens) ---------------
 function ScreenFace() {
   const ozTexture = useOzTexture()
   const scroll = useScroll()
@@ -197,4 +207,3 @@ function ScreenFace() {
     </group>
   )
 }
-
