@@ -3,7 +3,6 @@ import { useFrame } from '@react-three/fiber'
 import { useGLTF, useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import useOzTexture from './useOzTexture'
 
 // Configure Draco decoder for compressed GLB
@@ -75,38 +74,16 @@ export default function DeviceModel() {
   const { scene } = useGLTF('/models/talis_smooth.glb')
   const scroll = useScroll()
 
-  // Glossy black polycarbonate — piano black with translucent edges
+  // Glossy black polycarbonate — black paint interior, polished exterior
   const bodyMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#0a0a0a'),
+    color: new THREE.Color('#080808'),
     metalness: 0.02,
-    roughness: 0.05,
+    roughness: 0.04,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.03,
+    clearcoatRoughness: 0.02,
     reflectivity: 1.0,
-    transmission: 0.15,
-    thickness: 2.5,
-    attenuationColor: new THREE.Color('#000000'),
-    attenuationDistance: 0.3,
     ior: 1.585,
     envMapIntensity: 1.5,
-    sheen: 0,
-    side: THREE.FrontSide,
-  }), [])
-
-  // Glass lens barrel — clear glass with high reflections
-  const lensBarrelMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#e8f0f0'),
-    metalness: 0,
-    roughness: 0.0,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.005,
-    reflectivity: 1.0,
-    transmission: 0.85,
-    thickness: 1.5,
-    attenuationColor: new THREE.Color('#88cccc'),
-    attenuationDistance: 2.0,
-    ior: 1.52,
-    envMapIntensity: 1.8,
     side: THREE.DoubleSide,
   }), [])
 
@@ -115,16 +92,12 @@ export default function DeviceModel() {
       if (child.isMesh) {
         child.castShadow = true
         child.receiveShadow = true
-
-        if (child.name === 'lens_barrel' || child.name.includes('lens')) {
-          child.material = lensBarrelMaterial
-          child.renderOrder = 1
-        } else {
-          child.material = bodyMaterial
-        }
+        // Entire device is the same glossy black polycarbonate
+        // The glass lens face is handled separately by ScreenFace
+        child.material = bodyMaterial
       }
     })
-  }, [scene, bodyMaterial, lensBarrelMaterial])
+  }, [scene, bodyMaterial])
 
   useFrame(() => {
     if (!groupRef.current) return
@@ -160,6 +133,7 @@ export default function DeviceModel() {
 function ScreenFace() {
   const ozTexture = useOzTexture()
   const scroll = useScroll()
+  const meshRef = useRef()
 
   const shaderMaterial = useMemo(() => {
     const mat = new THREE.ShaderMaterial({
@@ -192,6 +166,11 @@ function ScreenFace() {
     if (offset > 0.86) reveal = Math.max(0, 1 - (offset - 0.86) / 0.04)
     shaderMaterial.uniforms.uReveal.value += (reveal - shaderMaterial.uniforms.uReveal.value) * 0.08
 
+    // Hide the mesh entirely when not revealing to prevent side-view edge artifacts
+    if (meshRef.current) {
+      meshRef.current.visible = shaderMaterial.uniforms.uReveal.value > 0.01
+    }
+
     // Tilt for image panning (0.45–0.60)
     const tilt = offset > 0.45 ? Math.min((offset - 0.45) / 0.15, 1) : 0
     const smoothTilt = tilt * tilt * (3 - 2 * tilt)
@@ -200,7 +179,7 @@ function ScreenFace() {
 
   return (
     <group>
-      <mesh position={[0, 0, 6.5]} renderOrder={2}>
+      <mesh ref={meshRef} position={[0, 0, 6.5]} renderOrder={2} visible={false}>
         <circleGeometry args={[25.5, 128]} />
         <primitive object={shaderMaterial} attach="material" />
       </mesh>
