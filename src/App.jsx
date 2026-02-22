@@ -112,10 +112,9 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
         const p = text2Ref.current.querySelector('p')
         if (p) {
           if (isDemo && offset >= t2OutStart) {
-            const fadeProgress = offset < t2OutEnd ? (offset - t2OutStart) / (t2OutEnd - t2OutStart) : 1
             const rect = text2Ref.current.getBoundingClientRect()
             const center = (window.innerHeight - p.offsetHeight) / 2 - rect.top
-            p.style.transform = `translateY(${center - fadeProgress * window.innerHeight * 0.15}px)`
+            p.style.transform = `translateY(${center}px)`
           } else {
             const rect = text2Ref.current.getBoundingClientRect()
             const shift = (window.innerHeight - p.offsetHeight) / 2 - rect.top
@@ -134,7 +133,7 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
     // Demo: animate bottom ? to center, grow via scale transform
     if (isDemo && demoBtnRef && demoBtnRef.current) {
       const el = demoBtnRef.current
-      if (offset < 0.55) {
+      if (offset < 0.38) {
         el.style.bottom = '4vh'
         el.style.transform = 'translateX(-50%)'
         el.style.opacity = ''
@@ -147,7 +146,7 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
           demoPhase.current = 'transition'
           el.style.animation = 'none'
         }
-        const p = (offset - 0.55) / 0.17
+        const p = (offset - 0.38) / 0.34
         const t = p * p * (3 - 2 * p)
         el.style.opacity = String(Math.min(0.35 + t * 0.65, 1))
         el.style.bottom = `${4 + t * 54}vh`
