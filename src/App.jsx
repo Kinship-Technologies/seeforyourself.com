@@ -716,7 +716,7 @@ export default function App({ variant = 'eden' }) {
               boxSizing: 'border-box',
             }}
           >
-            <p style={isDemo ? { ...textStyle, fontSize: 'clamp(26px, 4vw, 62px)' } : textStyle}>
+            <p style={isDemo ? { ...textStyle, fontSize: 'clamp(32px, 4.5vw, 62px)' } : textStyle}>
               {isDemo
                 ? 'Vision for a New World.'
                 : 'The forbidden fruit was never the apple.'}
@@ -736,7 +736,7 @@ export default function App({ variant = 'eden' }) {
               opacity: 0,
             }}
           >
-            <p style={isDemo ? { ...textStyle, fontSize: 'clamp(26px, 4vw, 62px)' } : textStyle}>
+            <p style={isDemo ? { ...textStyle, fontSize: 'clamp(32px, 4.5vw, 62px)' } : textStyle}>
               {isDemo
                 ? 'See for Yourself.'
                 : <>A camera with no name.<br />For everything you want to remember.</>}
