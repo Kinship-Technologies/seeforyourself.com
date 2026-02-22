@@ -741,117 +741,115 @@ export default function App({ variant = 'eden' }) {
             </p>
           </div>
 
-          {isDemo && (
-            <div
-              ref={calRef}
-              style={{
-                position: 'absolute',
-                top: '200vh',
-                left: 0,
-                width: '100%',
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                paddingTop: 'max(52vh, calc(35vh + 10vw))',
-                boxSizing: 'border-box',
-              }}
-            >
-              <p data-cal="sub1" style={{
-                ...textStyle,
-                fontSize: 'clamp(18px, 3vw, 42px)',
-                marginBottom: '0.3rem',
-                opacity: 0,
-              }}>
-                For 3 days on Haight St.
-              </p>
-              <p data-cal="sub2" style={{
-                ...textStyle,
-                fontSize: 'clamp(18px, 3vw, 42px)',
-                marginBottom: '3rem',
-                opacity: 0,
-              }}>
-                15 minutes of Magic.
-              </p>
-              <div data-cal="sched" style={{
-                width: '100%',
-                maxWidth: '680px',
-                padding: '0 1.5rem',
-                boxSizing: 'border-box',
-                display: 'flex',
-                gap: 'clamp(1rem, 3vw, 3rem)',
-                justifyContent: 'center',
-                opacity: 0,
-              }}>
-                {schedule.map(({ day, date, iso, times }) => (
-                  <div key={day} style={{ flex: 1, textAlign: 'center' }}>
-                    <p style={{
-                      fontFamily: "'Times New Roman', Times, serif",
-                      fontSize: 'clamp(12px, 1.6vw, 18px)',
-                      fontWeight: 400,
-                      color: '#111',
-                      marginBottom: '0.75rem',
-                    }}>
-                      {day} {date}
-                    </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      {times.map(({ label, hour, slot }) => {
-                        const isBooked = bookedSlots.has(`${iso}-${hour}`)
-                        return (
-                          <button
-                            key={label}
-                            disabled={isBooked}
-                            onClick={() => {
-                              if (!isBooked) {
-                                setBookingSlot({ day, date, iso, label, hour, slot })
-                              }
-                            }}
-                            style={{
-                              fontFamily: "'Times New Roman', Times, serif",
-                              fontSize: 'clamp(12px, 1.4vw, 18px)',
-                              fontWeight: 400,
-                              color: isBooked ? '#bbb' : '#333',
-                              background: 'none',
-                              border: 'none',
-                              borderBottom: isBooked ? '1px solid #ddd' : '1px solid #999',
-                              borderRadius: 0,
-                              padding: '0.5em 0',
-                              cursor: isBooked ? 'default' : 'pointer',
-                              textAlign: 'center',
-                              width: '100%',
-                              transition: 'all 0.2s ease',
-                              textDecoration: isBooked ? 'line-through' : 'none',
-                              position: 'relative',
-                            }}
-                            onMouseEnter={(e) => {
-                              if (!isBooked) {
-                                e.currentTarget.style.borderBottomColor = '#111'
-                                e.currentTarget.style.color = '#111'
-                                e.currentTarget.style.transform = 'scale(1.08)'
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (!isBooked) {
-                                e.currentTarget.style.borderBottomColor = '#999'
-                                e.currentTarget.style.color = '#333'
-                                e.currentTarget.style.transform = 'scale(1)'
-                              }
-                            }}
-                          >
-                            {label}
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </Scroll>
       </ScrollControls>
     </Canvas>
+    {isDemo && (
+      <div
+        ref={calRef}
+        style={{
+          position: 'fixed',
+          top: '52vh',
+          left: 0,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          zIndex: 100,
+          pointerEvents: 'none',
+        }}
+      >
+        <p data-cal="sub1" style={{
+          ...textStyle,
+          fontSize: 'clamp(18px, 3vw, 42px)',
+          marginBottom: '0.3rem',
+          opacity: 0,
+        }}>
+          For 3 days on Haight St.
+        </p>
+        <p data-cal="sub2" style={{
+          ...textStyle,
+          fontSize: 'clamp(18px, 3vw, 42px)',
+          marginBottom: '2rem',
+          opacity: 0,
+        }}>
+          15 minutes of Magic.
+        </p>
+        <div data-cal="sched" style={{
+          width: '100%',
+          maxWidth: '680px',
+          padding: '0 1.5rem',
+          boxSizing: 'border-box',
+          display: 'flex',
+          gap: 'clamp(1rem, 3vw, 3rem)',
+          justifyContent: 'center',
+          opacity: 0,
+        }}>
+          {schedule.map(({ day, date, iso, times }) => (
+            <div key={day} style={{ flex: 1, textAlign: 'center' }}>
+              <p style={{
+                fontFamily: "'Times New Roman', Times, serif",
+                fontSize: 'clamp(12px, 1.6vw, 18px)',
+                fontWeight: 400,
+                color: '#111',
+                marginBottom: '0.75rem',
+              }}>
+                {day} {date}
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                {times.map(({ label, hour, slot }) => {
+                  const isBooked = bookedSlots.has(`${iso}-${hour}`)
+                  return (
+                    <button
+                      key={label}
+                      disabled={isBooked}
+                      onClick={() => {
+                        if (!isBooked) {
+                          setBookingSlot({ day, date, iso, label, hour, slot })
+                        }
+                      }}
+                      style={{
+                        fontFamily: "'Times New Roman', Times, serif",
+                        fontSize: 'clamp(12px, 1.4vw, 18px)',
+                        fontWeight: 400,
+                        color: isBooked ? '#bbb' : '#333',
+                        background: 'none',
+                        border: 'none',
+                        borderBottom: isBooked ? '1px solid #ddd' : '1px solid #999',
+                        borderRadius: 0,
+                        padding: '0.5em 0',
+                        cursor: isBooked ? 'default' : 'pointer',
+                        textAlign: 'center',
+                        width: '100%',
+                        transition: 'all 0.2s ease',
+                        textDecoration: isBooked ? 'line-through' : 'none',
+                        position: 'relative',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isBooked) {
+                          e.currentTarget.style.borderBottomColor = '#111'
+                          e.currentTarget.style.color = '#111'
+                          e.currentTarget.style.transform = 'scale(1.08)'
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isBooked) {
+                          e.currentTarget.style.borderBottomColor = '#999'
+                          e.currentTarget.style.color = '#333'
+                          e.currentTarget.style.transform = 'scale(1)'
+                        }
+                      }}
+                    >
+                      {label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
     {isDemo && (
       <BookingModal
         slot={bookingSlot}
