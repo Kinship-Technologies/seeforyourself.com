@@ -98,8 +98,8 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
     // Text 2: different timing per variant (demo also fades out before calendar)
     const t2Start = isDemo ? 0.10 : 0.94
     const t2End = isDemo ? 0.20 : 1.00
-    const t2OutStart = 0.38
-    const t2OutEnd = 0.43
+    const t2OutStart = 0.28
+    const t2OutEnd = 0.33
     let o2 = offset < t2Start ? 0 : offset < t2End ? (offset - t2Start) / (t2End - t2Start) : 1
     if (isDemo && offset >= t2OutStart) {
       o2 = offset < t2OutEnd ? 1 - (offset - t2OutStart) / (t2OutEnd - t2OutStart) : 0
@@ -110,9 +110,16 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
       if (o2 > 0) {
         const p = text2Ref.current.querySelector('p')
         if (p) {
-          const rect = text2Ref.current.getBoundingClientRect()
-          const shift = (window.innerHeight - p.offsetHeight) / 2 - rect.top
-          p.style.transform = `translateY(${shift}px)`
+          if (isDemo && offset >= t2OutStart) {
+            const fadeProgress = offset < t2OutEnd ? (offset - t2OutStart) / (t2OutEnd - t2OutStart) : 1
+            const rect = text2Ref.current.getBoundingClientRect()
+            const center = (window.innerHeight - p.offsetHeight) / 2 - rect.top
+            p.style.transform = `translateY(${center - fadeProgress * window.innerHeight * 0.15}px)`
+          } else {
+            const rect = text2Ref.current.getBoundingClientRect()
+            const shift = (window.innerHeight - p.offsetHeight) / 2 - rect.top
+            p.style.transform = `translateY(${shift}px)`
+          }
         }
       }
     }
@@ -126,25 +133,34 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
     // Demo: animate bottom ? to center, grow, stop pulsing
     if (isDemo && demoBtnRef && demoBtnRef.current) {
       const el = demoBtnRef.current
-      if (offset < 0.55) {
+      if (offset < 0.45) {
         el.style.bottom = '4vh'
         el.style.transform = 'translateX(-50%)'
+        el.style.fontSize = ''
+        el.style.width = ''
+        el.style.height = ''
         el.style.opacity = ''
         if (el.style.animationName !== 'subtlePulse') {
           el.style.animation = 'subtlePulse 2s ease-in-out infinite'
         }
       } else if (offset < 0.72) {
-        const p = (offset - 0.55) / 0.17
+        const p = (offset - 0.45) / 0.27
         const t = p * p * (3 - 2 * p)
         el.style.animation = 'none'
         el.style.opacity = String(Math.min(0.35 + t * 0.65, 1))
-        el.style.bottom = `${4 + t * 54}vh`
-        el.style.transform = `translateX(-50%) scale(${1 + t * 0.6})`
+        el.style.bottom = `${4 + t * 58}vh`
+        el.style.transform = 'translateX(-50%)'
+        const size = 2.4 + t * 1.4
+        el.style.width = `${size}em`
+        el.style.height = `${size}em`
+        el.style.fontSize = `clamp(${22 + t * 14}px, ${2.5 + t * 1.5}vw, ${36 + t * 22}px)`
       } else {
-        el.style.animation = 'none'
-        el.style.opacity = '1'
-        el.style.bottom = '58vh'
-        el.style.transform = 'translateX(-50%) scale(1.6)'
+        el.style.animation = 'subtlePulse 3s ease-in-out infinite'
+        el.style.bottom = '62vh'
+        el.style.transform = 'translateX(-50%)'
+        el.style.fontSize = 'clamp(36px, 4vw, 58px)'
+        el.style.width = '3.8em'
+        el.style.height = '3.8em'
       }
     }
 
@@ -189,6 +205,7 @@ function BookingModal({ slot, onClose, onBooked, eventTypeId }) {
   const [notes, setNotes] = useState('')
   const [plusOne, setPlusOne] = useState(false)
   const [guestName, setGuestName] = useState('')
+  const [guestEmail, setGuestEmail] = useState('')
   const [status, setStatus] = useState('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -209,6 +226,7 @@ function BookingModal({ slot, onClose, onBooked, eventTypeId }) {
           email: email.trim(),
           notes: notes.trim(),
           guest: plusOne && guestName.trim() ? guestName.trim() : '',
+          guestEmail: plusOne && guestEmail.trim() ? guestEmail.trim() : '',
         }),
       })
       const data = await res.json()
@@ -329,6 +347,7 @@ function BookingModal({ slot, onClose, onBooked, eventTypeId }) {
             {plusOne ? '− Remove +1' : '+ Bringing a guest?'}
           </button>
           {plusOne && (
+            <>
             <input
               type="text"
               value={guestName}
@@ -336,6 +355,14 @@ function BookingModal({ slot, onClose, onBooked, eventTypeId }) {
               placeholder="Guest name"
               style={{ ...inputStyle, marginTop: '0.75rem' }}
             />
+            <input
+              type="email"
+              value={guestEmail}
+              onChange={(e) => setGuestEmail(e.target.value)}
+              placeholder="Guest email"
+              style={{ ...inputStyle, marginTop: '0.5rem' }}
+            />
+            </>
           )}
         </div>
         {errorMsg && (
@@ -537,23 +564,9 @@ export default function App({ variant = 'eden' }) {
       .then(r => r.json())
       .then(data => {
         if (data.eventTypeId) setEventTypeId(data.eventTypeId)
-        const slots = data.slots || {}
-        const available = new Set()
-        for (const daySlots of Object.values(slots)) {
-          for (const s of Array.isArray(daySlots) ? daySlots : []) {
-            if (s.time) available.add(s.time)
-          }
-        }
-        const booked = new Set()
-        for (const { iso, times } of schedule) {
-          for (const { hour, slot } of times) {
-            if (!available.has(slot)) booked.add(`${iso}-${hour}`)
-          }
-        }
-        setBookedSlots(booked)
       })
       .catch(() => {})
-  }, [isDemo, schedule])
+  }, [isDemo])
 
   useEffect(() => {
     if (!siteUnlocked || isDemo) return
@@ -703,7 +716,7 @@ export default function App({ variant = 'eden' }) {
               boxSizing: 'border-box',
             }}
           >
-            <p style={textStyle}>
+            <p style={isDemo ? { ...textStyle, fontSize: 'clamp(26px, 4vw, 62px)' } : textStyle}>
               {isDemo
                 ? 'Vision for a New World.'
                 : 'The forbidden fruit was never the apple.'}
@@ -723,7 +736,7 @@ export default function App({ variant = 'eden' }) {
               opacity: 0,
             }}
           >
-            <p style={textStyle}>
+            <p style={isDemo ? { ...textStyle, fontSize: 'clamp(26px, 4vw, 62px)' } : textStyle}>
               {isDemo
                 ? 'See for Yourself.'
                 : <>A camera with no name.<br />For everything you want to remember.</>}
@@ -743,7 +756,7 @@ export default function App({ variant = 'eden' }) {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
-                paddingTop: '47vh',
+                paddingTop: '42vh',
                 boxSizing: 'border-box',
               }}
             >
