@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/((?!assets|models|images|audio|docs|favicon).*)", "destination": "/index.html" }
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/((?!assets|models|images|audio|docs|favicon|api).*)", "destination": "/index.html" }
   ]
 }
