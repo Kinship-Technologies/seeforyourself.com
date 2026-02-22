@@ -756,7 +756,7 @@ export default function App({ variant = 'eden' }) {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
-                paddingTop: '42vh',
+                paddingTop: '35vh',
                 boxSizing: 'border-box',
               }}
             >
@@ -771,7 +771,7 @@ export default function App({ variant = 'eden' }) {
               <p data-cal="sub2" style={{
                 ...textStyle,
                 fontSize: 'clamp(18px, 3vw, 42px)',
-                marginBottom: '3rem',
+                marginBottom: '1.5rem',
                 opacity: 0,
               }}>
                 15 minutes of Magic.
