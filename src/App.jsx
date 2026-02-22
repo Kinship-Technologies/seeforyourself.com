@@ -187,6 +187,8 @@ function BookingModal({ slot, onClose, onBooked, eventTypeId }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [notes, setNotes] = useState('')
+  const [plusOne, setPlusOne] = useState(false)
+  const [guestName, setGuestName] = useState('')
   const [status, setStatus] = useState('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -202,11 +204,11 @@ function BookingModal({ slot, onClose, onBooked, eventTypeId }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          eventTypeId,
           start: slot.slot,
           name: name.trim(),
           email: email.trim(),
           notes: notes.trim(),
+          guest: plusOne && guestName.trim() ? guestName.trim() : '',
         }),
       })
       const data = await res.json()
@@ -309,6 +311,33 @@ function BookingModal({ slot, onClose, onBooked, eventTypeId }) {
             borderBottom: '1px solid #999',
           }}
         />
+        <div style={{ width: '100%' }}>
+          <button
+            type="button"
+            onClick={() => setPlusOne(!plusOne)}
+            style={{
+              fontFamily: "'Times New Roman', Times, serif",
+              fontSize: 'clamp(12px, 1.4vw, 16px)',
+              color: plusOne ? '#111' : '#999',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              transition: 'color 0.2s',
+            }}
+          >
+            {plusOne ? '− Remove +1' : '+ Bringing a guest?'}
+          </button>
+          {plusOne && (
+            <input
+              type="text"
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              placeholder="Guest name"
+              style={{ ...inputStyle, marginTop: '0.75rem' }}
+            />
+          )}
+        </div>
         {errorMsg && (
           <p style={{ ...textStyle, fontSize: 'clamp(11px, 1.2vw, 14px)', color: '#c44', margin: 0 }}>
             {errorMsg}
@@ -510,19 +539,15 @@ export default function App({ variant = 'eden' }) {
         if (data.eventTypeId) setEventTypeId(data.eventTypeId)
         const slots = data.slots || {}
         const available = new Set()
-        for (const [dateStr, daySlots] of Object.entries(slots)) {
-          const day = dateStr.slice(0, 10)
+        for (const daySlots of Object.values(slots)) {
           for (const s of Array.isArray(daySlots) ? daySlots : []) {
-            const t = s.time || s.start || dateStr
-            const d = new Date(t)
-            const h = `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`
-            available.add(`${day}-${h}`)
+            if (s.time) available.add(s.time)
           }
         }
         const booked = new Set()
         for (const { iso, times } of schedule) {
-          for (const { hour } of times) {
-            if (!available.has(`${iso}-${hour}`)) booked.add(`${iso}-${hour}`)
+          for (const { hour, slot } of times) {
+            if (!available.has(slot)) booked.add(`${iso}-${hour}`)
           }
         }
         setBookedSlots(booked)

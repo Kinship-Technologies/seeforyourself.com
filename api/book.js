@@ -1,10 +1,6 @@
 const CAL_API_KEY = process.env.CAL_API_KEY
-const CAL_BASE = 'https://api.cal.com/v2'
-const HEADERS = {
-  'Authorization': `Bearer ${CAL_API_KEY}`,
-  'cal-api-version': '2024-08-13',
-  'Content-Type': 'application/json',
-}
+const CAL_BASE = 'https://api.cal.com/v1'
+const EVENT_TYPE_ID = 4831534
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -12,26 +8,32 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { eventTypeId, start, name, email, notes } = req.body
+    const { start, name, email, notes, guest } = req.body
 
-    if (!eventTypeId || !start || !name || !email) {
+    if (!start || !name || !email) {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
-    const bookingRes = await fetch(`${CAL_BASE}/bookings`, {
+    const responses = {
+      name,
+      email,
+      notes: notes || '',
+    }
+
+    if (guest) {
+      responses.guests = [guest]
+    }
+
+    const bookingRes = await fetch(`${CAL_BASE}/bookings?apiKey=${CAL_API_KEY}`, {
       method: 'POST',
-      headers: HEADERS,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        eventTypeId,
+        eventTypeId: EVENT_TYPE_ID,
         start,
-        attendee: {
-          name,
-          email,
-          timeZone: 'America/Los_Angeles',
-        },
-        metadata: {
-          notes: notes || '',
-        },
+        responses,
+        timeZone: 'America/Los_Angeles',
+        language: 'en',
+        metadata: {},
       }),
     })
 
@@ -39,12 +41,12 @@ export default async function handler(req, res) {
 
     if (!bookingRes.ok) {
       return res.status(bookingRes.status).json({
-        error: bookingData?.error?.message || bookingData?.message || 'Booking failed',
+        error: bookingData?.message || 'Booking failed',
         details: bookingData,
       })
     }
 
-    return res.status(200).json({ success: true, booking: bookingData?.data })
+    return res.status(200).json({ success: true, booking: bookingData })
   } catch (err) {
     return res.status(500).json({ error: err.message })
   }
