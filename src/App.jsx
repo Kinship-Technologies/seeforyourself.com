@@ -755,7 +755,7 @@ export default function App({ variant = 'eden' }) {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
-                paddingTop: '47vh',
+                paddingTop: 'calc(30vh + 10vw)',
                 boxSizing: 'border-box',
               }}
             >
