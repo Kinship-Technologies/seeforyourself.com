@@ -4,21 +4,35 @@ import { ScrollControls, useScroll, Scroll, Environment, ContactShadows } from '
 import * as THREE from 'three'
 import DeviceModel from './components/DeviceModel'
 
-function CameraRig() {
+function CameraRig({ variant }) {
   const scroll = useScroll()
   const { camera } = useThree()
 
-  // Text 1 fades fast, model zooms in quickly after
-  const keyframes = useMemo(() => [
-    { at: 0.00, pos: [0, 0, 50],      target: [0, 0, 0] },
-    { at: 0.08, pos: [0, 0, 50],      target: [0, 0, 0] },
-    { at: 0.22, pos: [1, 2.5, 5.5],   target: [0, 0.6, 0] },
-    { at: 0.36, pos: [0, 0.3, 5],     target: [0, 0.3, 0] },
-    { at: 0.52, pos: [0, 0.3, 4.2],   target: [0, 0, 0] },
-    { at: 0.86, pos: [0, 0.3, 4.2],   target: [0, 0, 0] },
-    { at: 0.94, pos: [0, 0, 50],      target: [0, 0, 0] },
-    { at: 1.00, pos: [0, 0, 50],      target: [0, 0, 0] },
-  ], [])
+  const keyframes = useMemo(() => {
+    if (variant === 'demo') {
+      // Pull-out happens earlier to leave room for calendar
+      return [
+        { at: 0.00, pos: [0, 0, 50],      target: [0, 0, 0] },
+        { at: 0.06, pos: [0, 0, 50],      target: [0, 0, 0] },
+        { at: 0.18, pos: [1, 2.5, 5.5],   target: [0, 0.6, 0] },
+        { at: 0.30, pos: [0, 0.3, 5],     target: [0, 0.3, 0] },
+        { at: 0.42, pos: [0, 0.3, 4.2],   target: [0, 0, 0] },
+        { at: 0.72, pos: [0, 0.3, 4.2],   target: [0, 0, 0] },
+        { at: 0.80, pos: [0, 0, 50],      target: [0, 0, 0] },
+        { at: 1.00, pos: [0, 0, 50],      target: [0, 0, 0] },
+      ]
+    }
+    return [
+      { at: 0.00, pos: [0, 0, 50],      target: [0, 0, 0] },
+      { at: 0.08, pos: [0, 0, 50],      target: [0, 0, 0] },
+      { at: 0.22, pos: [1, 2.5, 5.5],   target: [0, 0.6, 0] },
+      { at: 0.36, pos: [0, 0.3, 5],     target: [0, 0.3, 0] },
+      { at: 0.52, pos: [0, 0.3, 4.2],   target: [0, 0, 0] },
+      { at: 0.86, pos: [0, 0.3, 4.2],   target: [0, 0, 0] },
+      { at: 0.94, pos: [0, 0, 50],      target: [0, 0, 0] },
+      { at: 1.00, pos: [0, 0, 50],      target: [0, 0, 0] },
+    ]
+  }, [variant])
 
   const smoothPos = useRef(new THREE.Vector3(0, 0, 50))
   const smoothTarget = useRef(new THREE.Vector3(0, 0, 0))
@@ -60,8 +74,9 @@ function CameraRig() {
   return null
 }
 
-function TextController({ text1Ref, text2Ref, btnRef }) {
+function TextController({ text1Ref, text2Ref, btnRef, calRef, variant }) {
   const scroll = useScroll()
+  const isDemo = variant === 'demo'
 
   useFrame(() => {
     const offset = scroll.offset
@@ -80,8 +95,11 @@ function TextController({ text1Ref, text2Ref, btnRef }) {
       }
     }
 
-    // Text 2 + button: fades in 0.94–1.00
-    const o2 = offset < 0.94 ? 0 : offset < 1.00 ? (offset - 0.94) / 0.06 : 1
+    // Text 2: different timing per variant
+    const t2Start = isDemo ? 0.80 : 0.94
+    const t2End = isDemo ? 0.86 : 1.00
+    const o2 = offset < t2Start ? 0 : offset < t2End ? (offset - t2Start) / (t2End - t2Start) : 1
+
     if (text2Ref.current) {
       text2Ref.current.style.opacity = o2
       if (o2 > 0) {
@@ -93,9 +111,17 @@ function TextController({ text1Ref, text2Ref, btnRef }) {
         }
       }
     }
-    if (btnRef.current) {
+
+    // Eden: ? button fades with text2
+    if (!isDemo && btnRef.current) {
       btnRef.current.style.opacity = o2
       btnRef.current.style.pointerEvents = o2 > 0.1 ? 'auto' : 'none'
+    }
+
+    // Demo: calendar fades in after text2
+    if (isDemo && calRef && calRef.current) {
+      const oCal = offset < 0.88 ? 0 : offset < 0.94 ? (offset - 0.88) / 0.06 : 1
+      calRef.current.style.opacity = oCal
     }
   })
 
@@ -242,19 +268,22 @@ function SiteGate({ onUnlock }) {
   )
 }
 
-export default function App() {
+export default function App({ variant = 'eden' }) {
+  const isDemo = variant === 'demo'
+
   const [siteUnlocked, setSiteUnlocked] = useState(
-    () => sessionStorage.getItem('site_unlocked') === '1'
+    () => isDemo || sessionStorage.getItem('site_unlocked') === '1'
   )
   const text1Ref = useRef()
   const text2Ref = useRef()
   const btnRef = useRef()
+  const calRef = useRef()
   const [gateOpen, setGateOpen] = useState(false)
   const audioRef = useRef(null)
   const audioStarted = useRef(false)
 
   useEffect(() => {
-    if (!siteUnlocked) return
+    if (!siteUnlocked || isDemo) return
     const tryPlay = () => {
       if (audioStarted.current || !audioRef.current) return
       audioRef.current.play().then(() => { audioStarted.current = true }).catch(() => {})
@@ -262,7 +291,7 @@ export default function App() {
     const events = ['wheel', 'touchstart', 'pointerdown', 'keydown']
     events.forEach(e => document.addEventListener(e, tryPlay, { once: true, capture: true, passive: true }))
     return () => events.forEach(e => document.removeEventListener(e, tryPlay, { capture: true }))
-  }, [siteUnlocked])
+  }, [siteUnlocked, isDemo])
 
   if (!siteUnlocked) {
     return <SiteGate onUnlock={() => setSiteUnlocked(true)} />
@@ -270,60 +299,72 @@ export default function App() {
 
   return (
     <>
-    <audio
-      ref={audioRef}
-      src="/audio/windowlicker.mp3"
-      loop
-      preload="none"
-      style={{ display: 'none' }}
-    />
-    <style>{`
-      @keyframes subtlePulse {
-        0%, 100% { opacity: 0.35; }
-        50% { opacity: 1; }
-      }
-    `}</style>
-    <PasswordGate open={gateOpen} onClose={() => setGateOpen(false)} />
-    <button
-      ref={btnRef}
-      onClick={() => setGateOpen(true)}
-      style={{
-        position: 'fixed',
-        bottom: '4vh',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 100,
-        fontFamily: "'Times New Roman', Times, serif",
-        fontSize: 'clamp(22px, 2.5vw, 36px)',
-        fontWeight: 400,
-        color: '#111',
-        background: 'none',
-        border: '1px solid #111',
-        borderRadius: '50%',
-        width: '2.4em',
-        height: '2.4em',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        animation: 'subtlePulse 2s ease-in-out infinite',
-        padding: 0,
-        lineHeight: 1,
-        opacity: 0,
-        pointerEvents: 'none',
-      }}
-    >
-      ?
-    </button>
+    {!isDemo && (
+      <audio
+        ref={audioRef}
+        src="/audio/windowlicker.mp3"
+        loop
+        preload="none"
+        style={{ display: 'none' }}
+      />
+    )}
+    {!isDemo && (
+      <>
+      <style>{`
+        @keyframes subtlePulse {
+          0%, 100% { opacity: 0.35; }
+          50% { opacity: 1; }
+        }
+      `}</style>
+      <PasswordGate open={gateOpen} onClose={() => setGateOpen(false)} />
+      <button
+        ref={btnRef}
+        onClick={() => setGateOpen(true)}
+        style={{
+          position: 'fixed',
+          bottom: '4vh',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 100,
+          fontFamily: "'Times New Roman', Times, serif",
+          fontSize: 'clamp(22px, 2.5vw, 36px)',
+          fontWeight: 400,
+          color: '#111',
+          background: 'none',
+          border: '1px solid #111',
+          borderRadius: '50%',
+          width: '2.4em',
+          height: '2.4em',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          animation: 'subtlePulse 2s ease-in-out infinite',
+          padding: 0,
+          lineHeight: 1,
+          opacity: 0,
+          pointerEvents: 'none',
+        }}
+      >
+        ?
+      </button>
+      </>
+    )}
     <Canvas
       camera={{ position: [0, 0, 50], fov: 45 }}
       gl={{ antialias: true, toneMapping: 3 }}
       dpr={[1, 2]}
       style={{ background: '#ffffff' }}
     >
-      <ScrollControls pages={5} damping={0.2}>
-        <CameraRig />
-        <TextController text1Ref={text1Ref} text2Ref={text2Ref} btnRef={btnRef} />
+      <ScrollControls pages={isDemo ? 6 : 5} damping={0.2}>
+        <CameraRig variant={variant} />
+        <TextController
+          text1Ref={text1Ref}
+          text2Ref={text2Ref}
+          btnRef={btnRef}
+          calRef={isDemo ? calRef : undefined}
+          variant={variant}
+        />
 
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 5]} intensity={0.6} castShadow />
@@ -354,7 +395,11 @@ export default function App() {
               boxSizing: 'border-box',
             }}
           >
-            <p style={textStyle}>The forbidden fruit was never the apple.</p>
+            <p style={textStyle}>
+              {isDemo
+                ? 'Vision for a New World.'
+                : 'The forbidden fruit was never the apple.'}
+            </p>
           </div>
 
           <div
@@ -370,8 +415,41 @@ export default function App() {
               opacity: 0,
             }}
           >
-            <p style={textStyle}>A camera with no name.<br />For everything you want to remember.</p>
+            <p style={textStyle}>
+              {isDemo
+                ? 'See for Yourself.'
+                : <>A camera with no name.<br />For everything you want to remember.</>}
+            </p>
           </div>
+
+          {isDemo && (
+            <div
+              ref={calRef}
+              style={{
+                position: 'absolute',
+                top: '500vh',
+                left: 0,
+                width: '100%',
+                height: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: 0,
+                boxSizing: 'border-box',
+              }}
+            >
+              <iframe
+                src="https://cal.com/PLACEHOLDER/15min?embed=true&theme=light"
+                style={{
+                  width: '100%',
+                  maxWidth: '480px',
+                  height: '600px',
+                  border: 'none',
+                }}
+                title="Schedule a demo"
+              />
+            </div>
+          )}
         </Scroll>
       </ScrollControls>
     </Canvas>
