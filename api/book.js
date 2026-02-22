@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { start, name, email, notes, guest } = req.body
+    const { start, name, email, notes, guest, guestEmail } = req.body
 
     if (!start || !name || !email) {
       return res.status(400).json({ error: 'Missing required fields' })
@@ -20,8 +20,8 @@ export default async function handler(req, res) {
       notes: notes || '',
     }
 
-    if (guest) {
-      responses.guests = [guest]
+    if (guestEmail) {
+      responses.guests = [guestEmail]
     }
 
     const bookingRes = await fetch(`${CAL_BASE}/bookings?apiKey=${CAL_API_KEY}`, {

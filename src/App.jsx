@@ -520,8 +520,74 @@ function SiteGate({ onUnlock }) {
   )
 }
 
+const liberationPhrases = [
+  { text: 'Technology for liberation.' },
+  { text: '解放のためのテクノロジー' },
+  { text: 'Technologie pour la libération.' },
+  { text: '.تكنولوجيا للتحرر', style: { fontFamily: "'Amiri', 'Times New Roman', serif", fontSize: 'clamp(32px, 7vw, 87px)', direction: 'rtl' } },
+  { text: 'Technologie für die Befreiung.' },
+  { text: '解放的技术' },
+  { text: 'Tecnología para la liberación.' },
+  { text: '해방을 위한 기술' },
+  { text: 'मुक्ति के लिए प्रौद्योगिकी' },
+]
+
+function EdenLanding() {
+  const [index, setIndex] = useState(0)
+  const [fade, setFade] = useState(1)
+
+  useEffect(() => {
+    const link = document.createElement('link')
+    link.href = 'https://fonts.googleapis.com/css2?family=Amiri&display=swap'
+    link.rel = 'stylesheet'
+    document.head.appendChild(link)
+  }, [])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(0)
+      setTimeout(() => {
+        setIndex(i => (i + 1) % liberationPhrases.length)
+        setFade(1)
+      }, 800)
+    }, 3500)
+    return () => clearInterval(interval)
+  }, [])
+
+  const phrase = liberationPhrases[index]
+
+  return (
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      background: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem',
+    }}>
+      <p style={{
+        fontFamily: "'Times New Roman', Times, serif",
+        fontSize: 'clamp(24px, 5vw, 64px)',
+        fontWeight: 400,
+        color: '#111',
+        letterSpacing: '-0.02em',
+        textAlign: 'center',
+        lineHeight: 1.35,
+        opacity: fade,
+        transition: 'opacity 0.8s ease',
+        ...phrase.style,
+      }}>
+        {phrase.text}
+      </p>
+    </div>
+  )
+}
+
 export default function App({ variant = 'eden' }) {
   const isDemo = variant === 'demo'
+
+  if (variant === 'landing') return <EdenLanding />
 
   const [siteUnlocked, setSiteUnlocked] = useState(
     () => isDemo || sessionStorage.getItem('site_unlocked') === '1'
@@ -532,7 +598,12 @@ export default function App({ variant = 'eden' }) {
   const calRef = useRef()
   const demoBtnRef = useRef()
   const [gateOpen, setGateOpen] = useState(false)
-  const [bookedSlots, setBookedSlots] = useState(new Set())
+  const [bookedSlots, setBookedSlots] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('bookedSlots')
+      return saved ? new Set(JSON.parse(saved)) : new Set()
+    } catch { return new Set() }
+  })
   const [bookingSlot, setBookingSlot] = useState(null)
   const [eventTypeId, setEventTypeId] = useState(null)
   const audioRef = useRef(null)
@@ -562,9 +633,40 @@ export default function App({ variant = 'eden' }) {
       .then(r => r.json())
       .then(data => {
         if (data.eventTypeId) setEventTypeId(data.eventTypeId)
+        if (data.slots) {
+          // Build a set of available slot ISO strings from Cal.com
+          const available = new Set()
+          Object.values(data.slots).forEach(daySlots => {
+            daySlots.forEach(s => {
+              available.add(s.time)
+            })
+          })
+          // Any slot in our schedule that is NOT in Cal.com available = booked
+          const booked = new Set()
+          schedule.forEach(({ iso, times }) => {
+            times.forEach(({ hour, slot }) => {
+              if (!available.has(slot)) {
+                booked.add(`${iso}-${hour}`)
+              }
+            })
+          })
+          if (booked.size > 0) {
+            setBookedSlots(prev => {
+              const merged = new Set([...prev, ...booked])
+              return merged.size !== prev.size ? merged : prev
+            })
+          }
+        }
       })
       .catch(() => {})
-  }, [isDemo])
+  }, [isDemo, schedule])
+
+  useEffect(() => {
+    if (!isDemo) return
+    try {
+      sessionStorage.setItem('bookedSlots', JSON.stringify([...bookedSlots]))
+    } catch {}
+  }, [bookedSlots, isDemo])
 
   useEffect(() => {
     if (!siteUnlocked || isDemo) return
@@ -749,7 +851,7 @@ export default function App({ variant = 'eden' }) {
         ref={calRef}
         style={{
           position: 'fixed',
-          top: '52vh',
+          top: '46vh',
           left: 0,
           width: '100%',
           display: 'flex',
@@ -761,7 +863,7 @@ export default function App({ variant = 'eden' }) {
       >
         <p data-cal="sub1" style={{
           ...textStyle,
-          fontSize: 'clamp(18px, 3vw, 42px)',
+          fontSize: 'clamp(22px, 3.5vw, 42px)',
           marginBottom: '0.3rem',
           opacity: 0,
         }}>
@@ -769,7 +871,7 @@ export default function App({ variant = 'eden' }) {
         </p>
         <p data-cal="sub2" style={{
           ...textStyle,
-          fontSize: 'clamp(18px, 3vw, 42px)',
+          fontSize: 'clamp(22px, 3.5vw, 42px)',
           marginBottom: '2rem',
           opacity: 0,
         }}>
