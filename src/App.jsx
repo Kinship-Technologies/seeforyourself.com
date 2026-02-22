@@ -131,51 +131,35 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
       btnRef.current.style.pointerEvents = o2 > 0.1 ? 'auto' : 'none'
     }
 
-    // Demo: animate bottom ? to center, grow, stop pulsing
+    // Demo: animate bottom ? to center, grow via scale transform
     if (isDemo && demoBtnRef && demoBtnRef.current) {
       const el = demoBtnRef.current
-      if (offset < 0.05) {
-        if (demoPhase.current !== 'hidden') {
-          demoPhase.current = 'hidden'
-          el.style.animation = 'none'
-        }
-        el.style.opacity = '0'
+      if (offset < 0.55) {
         el.style.bottom = '4vh'
         el.style.transform = 'translateX(-50%)'
-      } else if (offset < 0.45) {
+        el.style.opacity = ''
         if (demoPhase.current !== 'pulse') {
           demoPhase.current = 'pulse'
           el.style.animation = 'subtlePulse 2s ease-in-out infinite'
-          el.style.fontSize = ''
-          el.style.width = ''
-          el.style.height = ''
         }
-        el.style.bottom = '4vh'
-        el.style.transform = 'translateX(-50%)'
       } else if (offset < 0.72) {
         if (demoPhase.current !== 'transition') {
           demoPhase.current = 'transition'
           el.style.animation = 'none'
         }
-        const p = (offset - 0.45) / 0.27
+        const p = (offset - 0.55) / 0.17
         const t = p * p * (3 - 2 * p)
         el.style.opacity = String(Math.min(0.35 + t * 0.65, 1))
-        el.style.bottom = `${4 + t * 58}vh`
-        el.style.transform = 'translateX(-50%)'
-        const size = 2.4 + t * 1.4
-        el.style.width = `${size}em`
-        el.style.height = `${size}em`
-        el.style.fontSize = `clamp(${22 + t * 14}px, ${2.5 + t * 1.5}vw, ${36 + t * 22}px)`
+        el.style.bottom = `${4 + t * 54}vh`
+        el.style.transform = `translateX(-50%) scale(${1 + t * 0.6})`
       } else {
         if (demoPhase.current !== 'anchored') {
           demoPhase.current = 'anchored'
-          el.style.animation = 'subtlePulse 3s ease-in-out infinite'
+          el.style.animation = 'none'
         }
-        el.style.bottom = '62vh'
-        el.style.transform = 'translateX(-50%)'
-        el.style.fontSize = 'clamp(36px, 4vw, 58px)'
-        el.style.width = '3.8em'
-        el.style.height = '3.8em'
+        el.style.opacity = '1'
+        el.style.bottom = '58vh'
+        el.style.transform = 'translateX(-50%) scale(1.6)'
       }
     }
 
@@ -771,7 +755,7 @@ export default function App({ variant = 'eden' }) {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
-                paddingTop: '35vh',
+                paddingTop: '47vh',
                 boxSizing: 'border-box',
               }}
             >
@@ -786,7 +770,7 @@ export default function App({ variant = 'eden' }) {
               <p data-cal="sub2" style={{
                 ...textStyle,
                 fontSize: 'clamp(18px, 3vw, 42px)',
-                marginBottom: '1.5rem',
+                marginBottom: '3rem',
                 opacity: 0,
               }}>
                 15 minutes of Magic.
