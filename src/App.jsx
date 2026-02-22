@@ -149,14 +149,14 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
         const p = (offset - 0.38) / 0.34
         const t = p * p * (3 - 2 * p)
         el.style.opacity = String(Math.min(0.35 + t * 0.65, 1))
-        el.style.bottom = `${4 + t * 54}vh`
+        el.style.bottom = `${4 + t * 63}vh`
         el.style.transform = `translateX(-50%) scale(${1 + t * 0.6})`
       } else {
         if (demoPhase.current !== 'anchored') {
           demoPhase.current = 'anchored'
           el.style.animation = 'gentlePulse 4s ease-in-out infinite'
         }
-        el.style.bottom = '58vh'
+        el.style.bottom = '67vh'
         el.style.transform = 'translateX(-50%) scale(1.6)'
       }
     }
@@ -752,7 +752,7 @@ export default function App({ variant = 'eden' }) {
         ref={calRef}
         style={{
           position: 'fixed',
-          top: '46vh',
+          top: '48vh',
           left: 0,
           width: '100%',
           display: 'flex',
@@ -773,7 +773,7 @@ export default function App({ variant = 'eden' }) {
         <p data-cal="sub2" style={{
           ...textStyle,
           fontSize: 'clamp(18px, 3vw, 42px)',
-          marginBottom: '1.5rem',
+          marginBottom: '2rem',
           opacity: 0,
         }}>
           15 minutes of Magic.
