@@ -149,15 +149,14 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
         const p = (offset - 0.38) / 0.34
         const t = p * p * (3 - 2 * p)
         el.style.opacity = String(Math.min(0.35 + t * 0.65, 1))
-        el.style.bottom = `${4 + t * 54}vh`
+        el.style.bottom = `${4 + t * 48}vh`
         el.style.transform = `translateX(-50%) scale(${1 + t * 0.6})`
       } else {
         if (demoPhase.current !== 'anchored') {
           demoPhase.current = 'anchored'
-          el.style.animation = 'none'
+          el.style.animation = 'gentlePulse 4s ease-in-out infinite'
         }
-        el.style.opacity = '1'
-        el.style.bottom = '58vh'
+        el.style.bottom = '52vh'
         el.style.transform = 'translateX(-50%) scale(1.6)'
       }
     }
@@ -597,6 +596,10 @@ export default function App({ variant = 'eden' }) {
         0%, 100% { opacity: 0.35; }
         50% { opacity: 1; }
       }
+      @keyframes gentlePulse {
+        0%, 100% { opacity: 0.8; }
+        50% { opacity: 1; }
+      }
     `}</style>
     {!isDemo && (
       <>
@@ -749,7 +752,7 @@ export default function App({ variant = 'eden' }) {
         ref={calRef}
         style={{
           position: 'fixed',
-          top: '52vh',
+          top: '57vh',
           left: 0,
           width: '100%',
           display: 'flex',
