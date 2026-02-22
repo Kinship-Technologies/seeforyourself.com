@@ -77,6 +77,7 @@ function CameraRig({ variant }) {
 function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, variant }) {
   const scroll = useScroll()
   const isDemo = variant === 'demo'
+  const demoPhase = useRef('')
 
   useFrame(() => {
     const offset = scroll.offset
@@ -133,20 +134,31 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
     // Demo: animate bottom ? to center, grow, stop pulsing
     if (isDemo && demoBtnRef && demoBtnRef.current) {
       const el = demoBtnRef.current
-      if (offset < 0.45) {
+      if (offset < 0.05) {
+        if (demoPhase.current !== 'hidden') {
+          demoPhase.current = 'hidden'
+          el.style.animation = 'none'
+        }
+        el.style.opacity = '0'
         el.style.bottom = '4vh'
         el.style.transform = 'translateX(-50%)'
-        el.style.fontSize = ''
-        el.style.width = ''
-        el.style.height = ''
-        el.style.opacity = ''
-        if (el.style.animationName !== 'subtlePulse') {
+      } else if (offset < 0.45) {
+        if (demoPhase.current !== 'pulse') {
+          demoPhase.current = 'pulse'
           el.style.animation = 'subtlePulse 2s ease-in-out infinite'
+          el.style.fontSize = ''
+          el.style.width = ''
+          el.style.height = ''
         }
+        el.style.bottom = '4vh'
+        el.style.transform = 'translateX(-50%)'
       } else if (offset < 0.72) {
+        if (demoPhase.current !== 'transition') {
+          demoPhase.current = 'transition'
+          el.style.animation = 'none'
+        }
         const p = (offset - 0.45) / 0.27
         const t = p * p * (3 - 2 * p)
-        el.style.animation = 'none'
         el.style.opacity = String(Math.min(0.35 + t * 0.65, 1))
         el.style.bottom = `${4 + t * 58}vh`
         el.style.transform = 'translateX(-50%)'
@@ -155,7 +167,10 @@ function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, varian
         el.style.height = `${size}em`
         el.style.fontSize = `clamp(${22 + t * 14}px, ${2.5 + t * 1.5}vw, ${36 + t * 22}px)`
       } else {
-        el.style.animation = 'subtlePulse 3s ease-in-out infinite'
+        if (demoPhase.current !== 'anchored') {
+          demoPhase.current = 'anchored'
+          el.style.animation = 'subtlePulse 3s ease-in-out infinite'
+        }
         el.style.bottom = '62vh'
         el.style.transform = 'translateX(-50%)'
         el.style.fontSize = 'clamp(36px, 4vw, 58px)'
