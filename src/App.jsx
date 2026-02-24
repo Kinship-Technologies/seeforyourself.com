@@ -74,13 +74,18 @@ function CameraRig({ variant }) {
   return null
 }
 
-function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, variant }) {
+function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, scrollHintRef, variant }) {
   const scroll = useScroll()
   const isDemo = variant === 'demo'
   const demoPhase = useRef('')
 
   useFrame(() => {
     const offset = scroll.offset
+
+    // Scroll hint: fade out as offset goes 0→0.02
+    if (isDemo && scrollHintRef && scrollHintRef.current) {
+      scrollHintRef.current.style.opacity = offset < 0.02 ? 1 - offset / 0.02 : 0
+    }
 
     // Text 1: fades out quickly 0.02–0.07 so model can come in fast
     if (text1Ref.current) {
@@ -525,7 +530,7 @@ const liberationPhrases = [
   { text: '解放のためのテクノロジー' },
   { text: 'Technologie pour la libération.' },
   { text: '.تكنولوجيا للتحرر', style: { fontFamily: "'Amiri', 'Times New Roman', serif", fontSize: 'clamp(32px, 7vw, 87px)', direction: 'rtl' } },
-  { text: 'Technologie für die Befreiung.' },
+  { text: '.טכנולוגיה לשחרור', style: { direction: 'rtl' } },
   { text: '解放的技术' },
   { text: 'Tecnología para la liberación.' },
   { text: '해방을 위한 기술' },
@@ -597,6 +602,7 @@ export default function App({ variant = 'eden' }) {
   const btnRef = useRef()
   const calRef = useRef()
   const demoBtnRef = useRef()
+  const scrollHintRef = useRef()
   const [gateOpen, setGateOpen] = useState(false)
   const [bookedSlots, setBookedSlots] = useState(() => {
     try {
@@ -617,7 +623,7 @@ export default function App({ variant = 'eden' }) {
     ]},
     { day: 'Thursday', date: '2/26', iso: '2026-02-26', times: [
       { label: '10:00 AM', hour: '10:00', slot: '2026-02-26T18:00:00.000Z' },
-      { label: '1:00 PM', hour: '13:00', slot: '2026-02-26T21:00:00.000Z' },
+      { label: '3:00 PM', hour: '15:00', slot: '2026-02-26T23:00:00.000Z' },
       { label: '6:00 PM', hour: '18:00', slot: '2026-02-27T02:00:00.000Z' },
     ]},
     { day: 'Friday', date: '2/27', iso: '2026-02-27', times: [
@@ -698,6 +704,10 @@ export default function App({ variant = 'eden' }) {
       @keyframes subtlePulse {
         0%, 100% { opacity: 0.35; }
         50% { opacity: 1; }
+      }
+      @keyframes gentleBob {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(8px); }
       }
 `}</style>
     {!isDemo && (
@@ -780,6 +790,7 @@ export default function App({ variant = 'eden' }) {
           btnRef={btnRef}
           calRef={isDemo ? calRef : undefined}
           demoBtnRef={isDemo ? demoBtnRef : undefined}
+          scrollHintRef={isDemo ? scrollHintRef : undefined}
           variant={variant}
         />
 
@@ -818,7 +829,7 @@ export default function App({ variant = 'eden' }) {
           >
             <p style={isDemo ? { ...textStyle, fontSize: 'clamp(32px, 4.5vw, 62px)' } : textStyle}>
               {isDemo
-                ? 'Vision for a New World.'
+                ? 'A camera.'
                 : 'The forbidden fruit was never the apple.'}
             </p>
           </div>
@@ -846,6 +857,22 @@ export default function App({ variant = 'eden' }) {
         </Scroll>
       </ScrollControls>
     </Canvas>
+    {isDemo && (
+      <div ref={scrollHintRef} style={{
+        position: 'fixed',
+        bottom: '12vh',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 100,
+        fontFamily: "'Times New Roman', Times, serif",
+        fontSize: 'clamp(14px, 1.5vw, 18px)',
+        color: '#999',
+        animation: 'gentleBob 2s ease-in-out infinite',
+        pointerEvents: 'none',
+      }}>
+        ↓
+      </div>
+    )}
     {isDemo && (
       <div
         ref={calRef}
