@@ -818,7 +818,7 @@ export default function App({ variant = 'eden' }) {
           >
             <p style={isDemo ? { ...textStyle, fontSize: 'clamp(32px, 4.5vw, 62px)' } : textStyle}>
               {isDemo
-                ? 'A camera.'
+                ? 'Vision for a New World.'
                 : 'The forbidden fruit was never the apple.'}
             </p>
           </div>
