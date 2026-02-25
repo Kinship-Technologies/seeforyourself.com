@@ -74,18 +74,13 @@ function CameraRig({ variant }) {
   return null
 }
 
-function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, scrollHintRef, variant }) {
+function TextController({ text1Ref, text2Ref, btnRef, calRef, demoBtnRef, variant }) {
   const scroll = useScroll()
   const isDemo = variant === 'demo'
   const demoPhase = useRef('')
 
   useFrame(() => {
     const offset = scroll.offset
-
-    // Scroll hint: fade out as offset goes 0→0.02
-    if (isDemo && scrollHintRef && scrollHintRef.current) {
-      scrollHintRef.current.style.opacity = offset < 0.02 ? 1 - offset / 0.02 : 0
-    }
 
     // Text 1: fades out quickly 0.02–0.07 so model can come in fast
     if (text1Ref.current) {
@@ -602,7 +597,6 @@ export default function App({ variant = 'eden' }) {
   const btnRef = useRef()
   const calRef = useRef()
   const demoBtnRef = useRef()
-  const scrollHintRef = useRef()
   const [gateOpen, setGateOpen] = useState(false)
   const [bookedSlots, setBookedSlots] = useState(() => {
     try {
@@ -705,10 +699,6 @@ export default function App({ variant = 'eden' }) {
         0%, 100% { opacity: 0.35; }
         50% { opacity: 1; }
       }
-      @keyframes gentleBob {
-        0%, 100% { transform: translateX(-50%) translateY(0); }
-        50% { transform: translateX(-50%) translateY(8px); }
-      }
 `}</style>
     {!isDemo && (
       <>
@@ -790,7 +780,6 @@ export default function App({ variant = 'eden' }) {
           btnRef={btnRef}
           calRef={isDemo ? calRef : undefined}
           demoBtnRef={isDemo ? demoBtnRef : undefined}
-          scrollHintRef={isDemo ? scrollHintRef : undefined}
           variant={variant}
         />
 
@@ -857,22 +846,6 @@ export default function App({ variant = 'eden' }) {
         </Scroll>
       </ScrollControls>
     </Canvas>
-    {isDemo && (
-      <div ref={scrollHintRef} style={{
-        position: 'fixed',
-        bottom: '12vh',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 100,
-        fontFamily: "'Times New Roman', Times, serif",
-        fontSize: 'clamp(14px, 1.5vw, 18px)',
-        color: '#999',
-        animation: 'gentleBob 2s ease-in-out infinite',
-        pointerEvents: 'none',
-      }}>
-        ↓
-      </div>
-    )}
     {isDemo && (
       <div
         ref={calRef}
