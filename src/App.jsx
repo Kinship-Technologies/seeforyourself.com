@@ -399,7 +399,7 @@ function PasswordGate({ open, onClose }) {
     e.preventDefault()
     if (value.toLowerCase().trim() === 'forbidden') {
       onClose()
-      window.open('/docs/Kinship_Memo.pdf', '_blank')
+      window.open('/docs/kinship_?.pdf', '_blank')
     } else {
       setError(true)
       setTimeout(() => setError(false), 1200)
