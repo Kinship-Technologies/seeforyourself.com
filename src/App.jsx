@@ -521,7 +521,7 @@ function SiteGate({ onUnlock }) {
 }
 
 const liberationPhrases = [
-  { text: 'Technology for liberation.' },
+  { text: 'Technology for Liberation.' },
   { text: '解放のためのテクノロジー' },
   { text: 'Technologie pour la libération.' },
   { text: '.تكنولوجيا للتحرر', style: { fontFamily: "'Amiri', 'Times New Roman', serif", fontSize: 'clamp(32px, 7vw, 87px)', direction: 'rtl' } },
