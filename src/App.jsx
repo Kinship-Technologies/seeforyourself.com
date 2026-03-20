@@ -799,6 +799,7 @@ export default function App({ variant = 'eden' }) {
             opacity={0.4}
             scale={10}
             blur={2.5}
+            frames={1}
           />
         )}
         <Environment preset="studio" background={false} />

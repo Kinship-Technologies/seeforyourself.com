@@ -13,6 +13,9 @@ function loadImage(src) {
   return img
 }
 
+// Preload eden.jpg immediately at import time (before gate unlocks)
+const preloadedImage = loadImage('/images/eden.jpg')
+
 export default function useOzTexture() {
   const canvasRef = useRef(null)
   const textureRef = useRef(null)
@@ -35,7 +38,7 @@ export default function useOzTexture() {
   }
 
   if (!imageRef.current) {
-    imageRef.current = loadImage('/images/eden.jpg')
+    imageRef.current = preloadedImage
   }
 
   useFrame(() => {
