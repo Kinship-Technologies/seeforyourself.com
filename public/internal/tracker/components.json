@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "project": "Talis v0 - Rev_A BOM",
+    "version": "Rev A (11/29/2025)",
+    "owner": "Hana Azab",
+    "totalCost": "~$525",
+    "partCount": 459
+  },
+  "bom": [
+    { "line": 1, "subsystem": "Power", "name": "PMIC + Charger", "manufacturer": "TI", "partNumber": "BQ25895 (or BQ24074)", "qty": 1, "cost": 2.85, "supplier": "DigiKey" },
+    { "line": 2, "subsystem": "Power", "name": "Battery Li-Po", "manufacturer": "Grepow", "partNumber": "2,000\u20132,500 mAh", "qty": 1, "cost": 10.00, "supplier": "Vendor" },
+    { "line": 3, "subsystem": "SoC", "name": "Qualcomm AR1+", "manufacturer": "Qualcomm", "partNumber": "AR1+", "qty": 1, "cost": 50.00, "supplier": "Rep / NDA" },
+    { "line": 5, "subsystem": "Camera", "name": "Image Sensor", "manufacturer": "Framos", "partNumber": "FSM-IMX585", "qty": 1, "cost": 70.00, "supplier": "Distributor" },
+    { "line": "5a", "subsystem": "Lens", "name": "Liquid Lens", "manufacturer": "Corning Varioptic", "partNumber": "A39N", "qty": 1, "cost": 58.00, "supplier": "Rep / NDA" },
+    { "line": "5b", "subsystem": "Lens", "name": "Double Convex Lens", "manufacturer": "Edmund Optics", "partNumber": "#47-359", "qty": 1, "cost": 22.00, "supplier": "Distributor" },
+    { "line": "5c", "subsystem": "Lens", "name": "Aspheric Lens", "manufacturer": "Edmund Optics", "partNumber": "#66-320", "qty": 1, "cost": 180.00, "supplier": "Distributor" },
+    { "line": 6, "subsystem": "Display", "name": "Round AMOLED 1.8\u2033 480\u00d7480", "manufacturer": "Tianma", "partNumber": "MIPI-DSI module", "qty": 1, "cost": 20.00, "supplier": "Vendor" },
+    { "line": 7, "subsystem": "Audio", "name": "Dual MEMS + ADC", "manufacturer": "Knowles / TI", "partNumber": "SPH0645 \u00d72 + TLV320ADC", "qty": 1, "cost": 4.00, "supplier": "DigiKey" },
+    { "line": 8, "subsystem": "Connectivity", "name": "Wi-Fi/BLE module", "manufacturer": "Espressif/Murata", "partNumber": "ESP32-C6-MINI-1 or similar", "qty": 1, "cost": 3.00, "supplier": "Espressif" },
+    { "line": 9, "subsystem": "Storage", "name": "microSD Slot + NOR Flash", "manufacturer": "Various", "partNumber": "W25Q64JV (NOR)", "qty": 1, "cost": 2.00, "supplier": "DigiKey" },
+    { "line": 10, "subsystem": "Sensors", "name": "6-Axis IMU", "manufacturer": "Bosch", "partNumber": "BMI270", "qty": 1, "cost": 2.50, "supplier": "DigiKey" },
+    { "line": 11, "subsystem": "Sensors", "name": "Magnetometer", "manufacturer": "AKM", "partNumber": "AK09918C", "qty": 1, "cost": 1.00, "supplier": "Distributor" },
+    { "line": 12, "subsystem": "Sensors", "name": "Ambient Light + Proximity", "manufacturer": "ams OSRAM", "partNumber": "TMD3725", "qty": 1, "cost": 1.20, "supplier": "DigiKey" },
+    { "line": 13, "subsystem": "Sensors", "name": "Barometer (optional)", "manufacturer": "Bosch", "partNumber": "BMP390", "qty": 1, "cost": 1.00, "supplier": "DigiKey" },
+    { "line": 14, "subsystem": "Sensors", "name": "Temp/Humidity (optional)", "manufacturer": "TI", "partNumber": "HDC3020", "qty": 1, "cost": 0.80, "supplier": "DigiKey" },
+    { "line": 15, "subsystem": "Input", "name": "Touch/Squeeze Ring Ctrl", "manufacturer": "Azoteq", "partNumber": "IQS231", "qty": 1, "cost": 1.80, "supplier": "Distributor" },
+    { "line": 16, "subsystem": "Haptics", "name": "Haptic Driver + LRA", "manufacturer": "TI", "partNumber": "DRV2605L + LRA", "qty": 1, "cost": 1.50, "supplier": "DigiKey" },
+    { "line": 17, "subsystem": "I/O", "name": "Buttons + LEDs", "manufacturer": "C&K / Vishay", "partNumber": "TBD", "qty": 2, "cost": 0.20, "supplier": "DigiKey" },
+    { "line": 18, "subsystem": "Power Path", "name": "Rail Switch / Sequencer", "manufacturer": "TI/ADI", "partNumber": "Load switches + GPIO EN", "qty": 1, "cost": 3.00, "supplier": "DigiKey" },
+    { "line": 19, "subsystem": "Optional RF (footprint)", "name": "LTE/GNSS modem", "manufacturer": "Nordic", "partNumber": "nRF9161", "qty": 1, "cost": 12.00, "supplier": "Mouser" },
+    { "line": 20, "subsystem": "Optional AI (footprint)", "name": "Vision Accelerator", "manufacturer": "BrainChip", "partNumber": "Akida AKD1000", "qty": 0, "cost": 15.00, "supplier": "Vendor" }
+  ],
+  "research": [
+    { "label": "Sensor Study", "description": "FSM-IMX585 selection, spec chain, thermal analysis", "url": "/internal/sensorystudy" },
+    { "label": "Haptics Study", "description": "DRV2605L + LRA integration, haptic language design", "url": "/internal/hapticsstudy" }
+  ]
+}

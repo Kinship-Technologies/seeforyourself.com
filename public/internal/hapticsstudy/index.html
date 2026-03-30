@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>fetch('/api/auth/check').then(r=>{if(!r.ok)window.location='/internal/tracker/'})</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camera — Haptics Study</title>
+<style>
+  :root {
+    --ink: #000000;
+    --ink-2: #1a1a1a;
+    --ink-3: #666666;
+    --ink-4: #999999;
+    --paper: #ffffff;
+    --paper-2: #f0f0f0;
+    --paper-3: #e0e0e0;
+    --sans: 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-style: normal !important; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 64px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .header-left h1 {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+
+  .header-left h2 {
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .header-right {
+    text-align: right;
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.8;
+  }
+
+  /* Section */
+  .section { margin-bottom: 72px; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--paper-3);
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+
+  .section-body {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    max-width: 640px;
+    margin-bottom: 24px;
+  }
+
+  /* Thesis */
+  .thesis {
+    background: #1a1a1a;
+    color: #f8f8f8;
+    padding: 32px 36px;
+    margin-bottom: 48px;
+  }
+
+  .thesis-label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    margin-bottom: 20px;
+  }
+
+  .thesis-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .thesis-q {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 0.5px solid #333;
+    align-items: start;
+  }
+
+  .thesis-q:last-child { border-bottom: none; padding-bottom: 0; }
+  .thesis-q:first-child { padding-top: 0; }
+
+  .thesis-q-num {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-4);
+    letter-spacing: 0.06em;
+    padding-top: 2px;
+  }
+
+  .thesis-q-text {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: #e8e8e8;
+  }
+
+  .thesis-q-text strong {
+    font-weight: 500;
+    color: #fff;
+  }
+
+  /* Three col cards */
+  .three-col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .col-card { background: var(--paper-2); padding: 20px 18px; display: flex; flex-direction: column; }
+  .col-card.dark { background: #222222; color: #f8f8f8; }
+
+  .col-num {
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--paper-3);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .col-card.dark .col-num { color: #444; }
+
+  .col-title {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .col-body {
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.65;
+    margin-bottom: 14px;
+    flex: 1;
+  }
+  .col-card.dark .col-body { color: #aaa; }
+
+  .col-body strong { font-weight: 500; color: var(--ink-2); }
+  .col-card.dark .col-body strong { color: #ddd; }
+
+  .col-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-top: auto;
+  }
+  .col-card.dark .col-tag { color: #aaa; }
+
+  /* Callout */
+  .callout {
+    border-left: 2px solid var(--ink);
+    padding: 16px 22px;
+    background: var(--paper-2);
+    margin-top: 20px;
+  }
+
+  .callout-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+
+  .callout p { font-size: 13px; color: var(--ink-2); line-height: 1.7; }
+  .callout p + p { margin-top: 8px; }
+  .callout strong { font-weight: 500; color: var(--ink); }
+
+  /* Warn box */
+  .warn-box {
+    border-left: 2px solid #555;
+    padding: 14px 20px;
+    background: var(--paper-2);
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.65;
+  }
+
+  .warn-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+
+  .warn-box strong { font-weight: 500; color: var(--ink); }
+
+  /* Spec table */
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 16px;
+  }
+
+  .spec-table tr { border-bottom: 0.5px solid var(--paper-3); }
+  .spec-table tr:last-child { border-bottom: 1px solid var(--ink); }
+
+  .spec-table td { padding: 10px 0; vertical-align: top; }
+
+  .spec-table td:first-child {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    width: 180px;
+    padding-right: 16px;
+  }
+
+  .spec-table td:nth-child(2) { font-weight: 500; width: 190px; }
+
+  .spec-table td:last-child {
+    color: var(--ink-3);
+    font-size: 12px;
+    padding-left: 16px;
+  }
+
+  /* Failure modes grid */
+  .failure-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 16px;
+  }
+
+  .failure-card { background: var(--paper-2); padding: 18px 16px; }
+
+  .failure-letter {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+
+  .failure-title {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .failure-body {
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .failure-body strong { font-weight: 500; color: var(--ink-2); }
+
+  .failure-fix {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-2);
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+    padding-top: 10px;
+    border-top: 0.5px solid var(--paper-3);
+  }
+
+  /* Tech grid */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .tech-card { background: var(--paper-2); padding: 22px 20px; }
+  .tech-card.highlight { background: #222222; color: #f8f8f8; }
+
+  .tech-name { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .tech-sub {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 16px;
+  }
+  .tech-card.highlight .tech-sub { color: #666; }
+
+  .tech-rows { display: flex; flex-direction: column; }
+
+  .tech-row {
+    padding: 7px 0;
+    border-bottom: 0.5px solid var(--paper-3);
+  }
+  .tech-card.highlight .tech-row { border-bottom-color: #333; }
+  .tech-row:last-child { border-bottom: none; }
+
+  .tech-key {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 2px;
+  }
+  .tech-card.highlight .tech-key { color: #666; }
+
+  .tech-val { font-size: 12px; line-height: 1.55; color: var(--ink-2); }
+  .tech-card.highlight .tech-val { color: #ccc; }
+  .tech-val strong { font-weight: 500; color: var(--ink); }
+  .tech-card.highlight .tech-val strong { color: #f0f0f0; }
+
+  .tech-badge {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 0.5px solid var(--paper-3);
+    color: var(--ink-3);
+  }
+  .tech-badge.primary { border-color: var(--ink); color: var(--ink); }
+  .tech-card.highlight .tech-badge { border-color: #444; color: #777; }
+  .tech-card.highlight .tech-badge.primary { border-color: #ccc; color: #ddd; }
+
+  /* Silent rows */
+  .silent-rows { margin-top: 16px; border-top: 0.5px solid var(--paper-3); }
+
+  .silent-row {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 0.5px solid var(--paper-3);
+  }
+  .silent-row:last-child { border-bottom: 1px solid var(--ink); }
+
+  .silent-key {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-top: 2px;
+  }
+
+  .silent-val { font-size: 13px; color: var(--ink-2); line-height: 1.65; }
+  .silent-val strong { font-weight: 500; color: var(--ink); }
+
+  /* Architecture table */
+  .arch-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 16px;
+  }
+
+  .arch-table thead tr {
+    border-bottom: 1px solid var(--ink);
+    background: var(--paper-2);
+  }
+
+  .arch-table th {
+    padding: 9px 12px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .arch-table tr { border-bottom: 0.5px solid var(--paper-3); }
+  .arch-table tbody tr:last-child { border-bottom: 1px solid var(--ink); }
+
+  .arch-table td { padding: 10px 12px; vertical-align: top; }
+  .arch-table td:first-child { font-weight: 500; width: 180px; }
+  .arch-table td:nth-child(2) { color: var(--ink-2); width: 220px; }
+  .arch-table td:last-child { color: var(--ink-3); font-size: 12px; }
+
+  /* Decision block */
+  .decision {
+    background: var(--paper-2);
+    border-left: 2px solid var(--ink);
+    padding: 22px 26px;
+    margin-top: 24px;
+  }
+
+  .decision-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 12px;
+  }
+
+  .decision p { font-size: 14px; color: var(--ink-2); line-height: 1.7; }
+  .decision p + p { margin-top: 10px; }
+  .decision strong { font-weight: 500; color: var(--ink); }
+
+  /* Pill badges */
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .pill-good { background: #e8e8e8; color: #111; }
+  .pill-warn { background: #d8d8d8; color: #333; }
+  .pill-bad { background: #cccccc; color: #111; }
+
+  /* Footer */
+  .footer {
+    margin-top: 80px;
+    padding-top: 20px;
+    border-top: 0.5px solid var(--paper-3);
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--ink-4);
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 700px) {
+    .page { padding: 32px 20px 60px; }
+    .three-col, .failure-grid, .tech-grid { grid-template-columns: 1fr; }
+    .silent-row { grid-template-columns: 1fr; gap: 4px; }
+    .header { flex-direction: column; gap: 16px; }
+    .header-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="header">
+    <div class="header-left">
+      <h1>Kinship Technologies — Internal</h1>
+      <h2>Haptics study<br>Camera v0.3</h2>
+    </div>
+    <div class="header-right">
+      March 2026<br>
+      Hana, Abtin, Maxime<br>
+      Kinship Technologies
+    </div>
+  </header>
+
+  <div class="thesis">
+    <div class="thesis-label">Three research questions</div>
+    <div class="thesis-questions">
+      <div class="thesis-q">
+        <span class="thesis-q-num">01</span>
+        <span class="thesis-q-text">How do existing capture devices handle haptics without contaminating audio or video — and has anyone actually solved it?</span>
+      </div>
+      <div class="thesis-q">
+        <span class="thesis-q-num">02</span>
+        <span class="thesis-q-text">What does vibration actually do to the liquid lens I've spec'd, and is it a real risk I need to design around?</span>
+      </div>
+      <div class="thesis-q">
+        <span class="thesis-q-num">03</span>
+        <span class="thesis-q-text">Is there a haptic technology that delivers <strong>felt sensation on skin without producing sound</strong> — so it never enters the recording at all?</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section">
+    <div class="section-label">01 — Precedent</div>
+    <div class="section-title">How existing capture devices handle it</div>
+    <div class="section-body">No major handheld capture device has solved this cleanly. The iPhone comes closest — and even it shipped a documented failure that Apple had to patch at the OS level. That's a useful data point for where the industry is.</div>
+
+    <div class="three-col">
+      <div class="col-card">
+        <div class="col-num">A</div>
+        <div class="col-title">Apple iPhone Taptic Engine</div>
+        <div class="col-body">Apple fires haptics on shutter tap, mode change, and recording start/stop while the camera is active. The critical insight: Apple built a dedicated OS-level API — <em>setAllowHapticsAndSystemSoundsDuringRecording</em> — specifically because the mic and haptic engine conflict by default. iOS disables standard haptic APIs when audio capture is active. Apple's native camera app bypasses this using a low-level system call (AudioServicesPlaySystemSound) that is completely independent of the audio session — it routes around the recording pipeline entirely.</div>
+        <div class="col-tag">Strategy: OS-level routing isolation</div>
+      </div>
+
+      <div class="col-card">
+        <div class="col-num">B</div>
+        <div class="col-title">iPhone 17 Pro — active failure</div>
+        <div class="col-body">In September 2025, iPhone 17 Pro shipped with a documented haptic-mic contamination issue. Users reported microphone hissing during video recording. The hissing was caused by the haptic motor's EM field coupling into the mic circuitry through shared chassis resonance. Apple confirmed a software fix. <strong>Root cause: the actuator and the mic array shared structural pathways through the metal body.</strong> Software isolation alone was not enough.</div>
+        <div class="col-tag">Failure: structural path coupling</div>
+      </div>
+
+      <div class="col-card dark">
+        <div class="col-num">C</div>
+        <div class="col-title">DJI / GoPro action cams</div>
+        <div class="col-body">DJI and GoPro do not implement haptics during recording at all. The actuator is electrically disabled the moment recording begins. Simplest solution, most common in the industry. It works, but it kills exactly the use case I'm building for: real-time confirmation while capture is happening, so the user knows the device is recording without looking at it.</div>
+        <div class="col-tag">Strategy: disable during capture</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">The Camera-specific constraint</div>
+      <p><strong>Camera's haptic must fire confirmation pulses while recording.</strong> That's the whole point — the user isn't looking at the device. The haptic is the only confirmation channel. DJI's approach eliminates the use case. Apple's approach gets close, but their iPhone 17 Pro failure shows hardware isolation matters as much as software routing. I need both: signal-path decoupling and mechanical isolation between the actuator, the mic, and the lens system.</p>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section">
+    <div class="section-label">02 — Liquid lens risk</div>
+    <div class="section-title">What haptic vibration does to a liquid lens</div>
+    <div class="section-body">This was the question I was most uncertain about going in. The research literature answers it precisely — and the answer directly constrains which actuator I can use.</div>
+
+    <table class="spec-table">
+      <tr>
+        <td>The mechanism</td>
+        <td>Bessel mode surface waves</td>
+        <td>External vibration induces axisymmetric standing waves on the liquid-liquid interface, degrading optical quality. Confirmed experimentally in peer-reviewed research on electrowetting lenses.</td>
+      </tr>
+      <tr>
+        <td>Lens resonance band</td>
+        <td>45–200 Hz</td>
+        <td>Fundamental resonance for a 4mm aperture electrowetting lens. Directly overlaps with standard LRA and ERM haptic actuator operating frequencies — a direct conflict without isolation.</td>
+      </tr>
+      <tr>
+        <td>LRA haptic frequency</td>
+        <td>150–235 Hz</td>
+        <td>Standard LRA resonant frequencies used in consumer devices. Falls within or adjacent to the liquid lens resonance band.</td>
+      </tr>
+      <tr>
+        <td>ERM motor frequency</td>
+        <td>100–300 Hz variable</td>
+        <td>Sweeps through the entire resonance band continuously. Worst-case scenario for optical degradation.</td>
+      </tr>
+      <tr>
+        <td>The density-match fix</td>
+        <td>Δρ ≤ 4 kg/m³</td>
+        <td>Lenses with density-matched fluids (Δρ = 4 kg/m³) are robust to external vibration. Lenses with Δρ = 250 kg/m³ show clear Bessel mode degradation. Corning Varioptic markets their lenses specifically on this vibration resistance.</td>
+      </tr>
+      <tr>
+        <td>Active suppression</td>
+        <td>Voltage modulation</td>
+        <td>Amplitude-modulated compensation applied to the lens drive voltage can reduce RMS intensity variation from 0.571 to 0.114. Backup option if density matching isn't confirmed sufficient.</td>
+      </tr>
+    </table>
+
+    <div class="warn-box">
+      <div class="warn-label">Action item — internal</div>
+      We have the Varioptic spec. <strong>Check the density delta (Δρ) of the fluid against the 4 kg/m³ threshold and confirm the resonance frequencies before finalizing the haptic spec.</strong> If density-matched, the architecture in section 06 holds as written. If not, mechanical isolation is added to the lens mount as a SOW line item.
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section">
+    <div class="section-label">03 — Audio contamination</div>
+    <div class="section-title">How vibration enters the audio signal</div>
+    <div class="section-body">Three distinct failure modes. Each has a different cause and a different fix. All three need to be addressed — they compound.</div>
+
+    <div class="failure-grid">
+      <div class="failure-card">
+        <div class="failure-letter">Failure mode A</div>
+        <div class="failure-title">Structural path coupling</div>
+        <div class="failure-body">Vibration travels through the chassis from actuator to mic capsule. Even if the mic element is electrically isolated, the chassis physically moves the diaphragm. 100–300 Hz is well inside mic sensitivity — it appears directly in the recording.</div>
+        <div class="failure-fix">Fix: rubber isolation mounts, flexible PCB bridges, acoustic damping between actuator and mic mount points</div>
+      </div>
+      <div class="failure-card">
+        <div class="failure-letter">Failure mode B</div>
+        <div class="failure-title">Electromagnetic coupling</div>
+        <div class="failure-body">LRA and ERM motors generate changing magnetic fields. If the MEMS mic element or its traces are within ~15mm of the actuator without shielding, the field induces current that appears as noise. <strong>This was the iPhone 17 Pro failure.</strong></div>
+        <div class="failure-fix">Fix: Faraday shield around mic circuit, ground plane between actuator and mic traces, minimum 20mm separation from any actuator</div>
+      </div>
+      <div class="failure-card">
+        <div class="failure-letter">Failure mode C</div>
+        <div class="failure-title">Power rail contamination</div>
+        <div class="failure-body">The haptic driver IC draws pulsed current. If the mic analog front end shares a power rail with the haptic driver, switching noise appears directly in the audio chain. Pure PCB layout problem, independent of mechanical or EM issues.</div>
+        <div class="failure-fix">Fix: dedicated LDO regulator for mic analog chain, fully decoupled from all actuator power rails</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section">
+    <div class="section-label">04 — Technology landscape</div>
+    <div class="section-title">Haptic technologies evaluated for Camera</div>
+    <div class="section-body">Evaluated against Camera's specific constraints: confirmation feel during recording, no audio contamination, no liquid lens degradation, fits within a 55mm circular body.</div>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-name">ERM — Eccentric Rotating Mass</div>
+        <div class="tech-sub">Traditional motor vibration</div>
+        <div class="tech-rows">
+          <div class="tech-row"><div class="tech-key">Frequency</div><div class="tech-val">100–300 Hz variable</div></div>
+          <div class="tech-row"><div class="tech-key">Sound produced</div><div class="tech-val">Yes — audible whine and structural noise. Worst-in-class.</div></div>
+          <div class="tech-row"><div class="tech-key">Liquid lens risk</div><div class="tech-val">High. Sweeps resonance band continuously.</div></div>
+          <div class="tech-row"><div class="tech-key">Verdict</div><div class="tech-val"><strong>Eliminated.</strong></div></div>
+        </div>
+        <span class="tech-badge">Eliminated</span>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-name">LRA — Linear Resonant Actuator</div>
+        <div class="tech-sub">Apple Taptic Engine architecture</div>
+        <div class="tech-rows">
+          <div class="tech-row"><div class="tech-key">Frequency</div><div class="tech-val">150–235 Hz narrow band at resonance</div></div>
+          <div class="tech-row"><div class="tech-key">Sound produced</div><div class="tech-val">Low but not silent — produces an audible tick at actuation.</div></div>
+          <div class="tech-row"><div class="tech-key">Liquid lens risk</div><div class="tech-val">Moderate. Adjacent to lens resonance band. Needs isolation.</div></div>
+          <div class="tech-row"><div class="tech-key">Verdict</div><div class="tech-val"><strong>Most viable conventional option — significant isolation engineering required.</strong></div></div>
+        </div>
+        <span class="tech-badge primary">Conventional candidate</span>
+      </div>
+
+      <div class="tech-card highlight">
+        <div class="tech-name">Thin-film piezoelectric</div>
+        <div class="tech-sub">KEMET / TDK PiezoHapt — haptic skin</div>
+        <div class="tech-rows">
+          <div class="tech-row"><div class="tech-key">Frequency</div><div class="tech-val">Wide bandwidth — sub-Hz to kHz. Tunable per event.</div></div>
+          <div class="tech-row"><div class="tech-key">Sound produced</div><div class="tech-val">Minimal. 150µm film actuates surface only — no moving mass, no air displacement. Practically silent.</div></div>
+          <div class="tech-row"><div class="tech-key">Liquid lens risk</div><div class="tech-val">Lower than LRA. Localized surface deformation. Tunable above or below lens resonance band.</div></div>
+          <div class="tech-row"><div class="tech-key">Form factor</div><div class="tech-val">150µm film embeds directly into device surface. Invisible in the body.</div></div>
+          <div class="tech-row"><div class="tech-key">Verdict</div><div class="tech-val"><strong>Preferred architecture for Camera.</strong></div></div>
+        </div>
+        <span class="tech-badge primary">Preferred candidate</span>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-name">Ultrasonic mid-air</div>
+        <div class="tech-sub">Ultraleap / phased 40kHz arrays</div>
+        <div class="tech-rows">
+          <div class="tech-row"><div class="tech-key">Frequency</div><div class="tech-val">40 kHz carrier, modulated 5–500 Hz for skin perception</div></div>
+          <div class="tech-row"><div class="tech-key">Sound produced</div><div class="tech-val">Zero audible sound. 40 kHz is above human hearing. Felt, not heard.</div></div>
+          <div class="tech-row"><div class="tech-key">Liquid lens risk</div><div class="tech-val">Potential coupling at 40 kHz into liquid media — manageable with shielding. Energy focused outward at the hand.</div></div>
+          <div class="tech-row"><div class="tech-key">Form factor</div><div class="tech-val">Requires 16×16 transducer array — too large for 55mm body at v1. pMUT miniaturization is coming.</div></div>
+          <div class="tech-row"><div class="tech-key">Verdict</div><div class="tech-val"><strong>Acoustically cleanest option. Not viable at v1.</strong> Target for v2.</div></div>
+        </div>
+        <span class="tech-badge">v2 target</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section">
+    <div class="section-label">05 — The silent haptic answer</div>
+    <div class="section-title">Answer to question 3: felt sensation without sound</div>
+    <div class="section-body">Yes — and this was the most interesting finding. Two technologies achieve it. The physics explains why most haptics make noise and why these two don't.</div>
+
+    <div class="silent-rows">
+      <div class="silent-row">
+        <div class="silent-key">Why LRA and ERM make sound</div>
+        <div class="silent-val">Any actuator that moves a physical mass through air generates audible pressure waves as a byproduct. The only way to eliminate audible sound is to eliminate mass movement entirely (thin-film piezo) or push the carrier frequency above 20 kHz (ultrasonic). There is no quiet ERM or LRA — the sound is a physics consequence, not an engineering failure.</div>
+      </div>
+      <div class="silent-row">
+        <div class="silent-key">Option 1 — thin-film piezo</div>
+        <div class="silent-val"><strong>How it works:</strong> The 150µm polymer film deforms the surface the finger is touching. Mechanoreceptors in the fingertip detect the deformation directly. No mass moves through air. No audible pressure wave is generated. Practically silent at typical actuation levels. <strong>Sensation quality:</strong> localized, textural, high-fidelity — can convey fine confirmation patterns at any frequency.</div>
+      </div>
+      <div class="silent-row">
+        <div class="silent-key">Option 2 — ultrasonic 40kHz</div>
+        <div class="silent-val"><strong>How it works:</strong> Phased array focuses acoustic pressure on the skin. 40 kHz is above human hearing. Modulation creates pressure variation that stimulates mechanoreceptors — felt, not heard. Zero sound in audible range. <strong>Constraint:</strong> transducer array currently too large for Camera's body at v1. Correct answer for v2.</div>
+      </div>
+      <div class="silent-row">
+        <div class="silent-key">Sensation character</div>
+        <div class="silent-val">Thin-film piezo delivers softer, more textural, localized sensation — less percussive than LRA. The design question this opens: should Camera's haptic language feel like a <strong>pulse</strong> (I captured something — discrete, countable) or a <strong>sensation</strong> (something moved through me — continuous)? Actuator spec resolves first. Then Maxime and I design the haptic language together from the available envelope, and hand it to firmware for implementation.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">Answer to question 3</div>
+      <p><strong>Yes — thin-film piezoelectric is the answer.</strong> It delivers felt sensation on the skin without producing audible sound, without shaking the device body, and without generating EM fields that contaminate mic circuits. It fits in 150µm. It's the right architecture for Camera.</p>
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section">
+    <div class="section-label">06 — Architecture</div>
+    <div class="section-title">How I'm thinking about building Camera's haptic system</div>
+
+    <table class="arch-table">
+      <thead>
+        <tr>
+          <th>Decision</th>
+          <th>Spec</th>
+          <th>Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Actuator technology</td>
+          <td>Thin-film piezo (KEMET or TDK PiezoHapt)</td>
+          <td>Only option that fits the body, doesn't threaten the liquid lens, and is practically silent during recording.</td>
+        </tr>
+        <tr>
+          <td>Placement</td>
+          <td>Grip zone only</td>
+          <td>Minimum 25mm from liquid lens assembly and microphone capsule. Film bonds to inner surface of housing at thumb/finger contact zone.</td>
+        </tr>
+        <tr>
+          <td>Actuation frequency</td>
+          <td>Above 250 Hz or below 40 Hz</td>
+          <td>Avoids the 45–200 Hz electrowetting lens resonance band. 250–400 Hz provides clean confirmation pulses outside lens sensitivity.</td>
+        </tr>
+        <tr>
+          <td>Lens mount</td>
+          <td>Floating elastomer mount</td>
+          <td>Lens module suspended on compliant elastomer, mechanically decoupled from haptic actuation path through chassis wall.</td>
+        </tr>
+        <tr>
+          <td>Mic isolation</td>
+          <td>Separate LDO + Faraday shield</td>
+          <td>Mic analog chain on dedicated LDO, no shared power with haptic driver. Ground plane and Faraday shield around mic circuit. 20mm+ from any actuator element.</td>
+        </tr>
+        <tr>
+          <td>Signal routing</td>
+          <td>Decoupled from audio session</td>
+          <td>Haptic events fire through a path that never enters the audio processing pipeline — equivalent of Apple's AudioServicesPlaySystemSound at the firmware level.</td>
+        </tr>
+        <tr>
+          <td>Validation</td>
+          <td>FFT during recording</td>
+          <td>Spectrum analysis of recorded audio during all planned haptic event types. Target: less than 3dB above noise floor. Any energy in 20 Hz–20 kHz = failure.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="decision">
+      <div class="decision-label">Where I land</div>
+      <p><strong>Committing to thin-film piezo as the actuator architecture.</strong> It's the only option that fits the body, doesn't threaten the liquid lens, is practically silent during recording, and is aligned with what Camera should feel like. That decision is made.</p>
+      <p><strong>Maxime and I will design the haptic language together</strong> — working from the actuation envelope the spec'd actuator provides: available frequencies, pulse durations, intensity curves, and timing constraints. The output of that process is a defined haptic language document that goes to firmware and embedded for implementation. Interaction design owns the language. Engineering owns the implementation.</p>
+      <p><strong>The only open technical item before closing the haptic spec is confirming the liquid lens density delta.</strong> We have the Varioptic spec — need to verify Δρ against the 4 kg/m³ threshold and confirm resonance frequencies. If density-matched, the architecture above holds. If not, mechanical isolation is added to the lens mount as a SOW line item.</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>Kinship Technologies — Confidential</span>
+    <span>Camera v0.3 · Haptics Study · March 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>fetch('/api/auth/check').then(r=>{if(!r.ok)window.location='/internal/tracker/'})</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camera — Sensor Study</title>
+
+<style>
+  :root {
+    --ink: #000000;
+    --ink-2: #1a1a1a;
+    --ink-3: #666666;
+    --ink-4: #999999;
+    --paper: #ffffff;
+    --paper-2: #f0f0f0;
+    --paper-3: #e0e0e0;
+    --accent: #444444;
+    --accent-2: #888888;
+    --good: #333333;
+    --good-bg: #f0f0f0;
+    --warn: #444444;
+    --warn-bg: #ebebeb;
+    --bad: #222222;
+    --bad-bg: #e8e8e8;
+    --mono: 'Inter', sans-serif;
+    --sans: 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 64px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .header-left h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+
+  .header-left h2 {
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .header-left h2 em {
+    font-style: normal;
+    color: var(--ink-3);
+  }
+
+  .header-right {
+    text-align: right;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.8;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 72px;
+  }
+
+  .section-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--paper-3);
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+
+  .section-body {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    max-width: 640px;
+  }
+
+  /* Thesis block */
+  .thesis {
+    background: #1a1a1a;
+    color: #f8f8f8;
+    padding: 32px 36px;
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .thesis-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    margin-bottom: 14px;
+  }
+
+  .thesis p {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.65;
+    letter-spacing: -0.01em;
+  }
+
+  .thesis p + p {
+    margin-top: 12px;
+  }
+
+  .thesis strong {
+    font-weight: 500;
+    color: #fff;
+  }
+
+  /* Spec chain */
+  .chain-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 16px;
+  }
+
+  .chain-table tr {
+    border-bottom: 0.5px solid var(--paper-3);
+  }
+
+  .chain-table tr:last-child {
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .chain-table td {
+    padding: 10px 0;
+    vertical-align: top;
+  }
+
+  .chain-table td:first-child {
+    color: var(--ink-3);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    width: 220px;
+    padding-right: 20px;
+  }
+
+  .chain-table td:nth-child(2) {
+    font-weight: 500;
+    width: 140px;
+  }
+
+  .chain-table td:last-child {
+    color: var(--ink-3);
+    font-size: 12px;
+    padding-left: 16px;
+  }
+
+  .chain-arrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--ink-4);
+    padding: 4px 0;
+  }
+
+  /* Sensor cards */
+  .sensor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .sensor-card {
+    background: var(--paper-2);
+    padding: 20px 18px;
+    position: relative;
+  }
+
+  .sensor-card.recommended {
+    background: #222222;
+    color: #f8f8f8;
+  }
+
+  .sensor-card-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+
+  .sensor-card.recommended .sensor-card-tag {
+    color: var(--ink-4);
+  }
+
+  .sensor-card-name {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .sensor-card-format {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-bottom: 16px;
+  }
+
+  .sensor-card.recommended .sensor-card-format {
+    color: var(--ink-4);
+  }
+
+  .sensor-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 5px 0;
+    border-bottom: 0.5px solid var(--paper-3);
+    font-size: 12px;
+  }
+
+  .sensor-card.recommended .sensor-stat {
+    border-bottom-color: rgba(255,255,255,0.1);
+  }
+
+  .sensor-stat:last-child { border-bottom: none; }
+
+  .sensor-stat-label {
+    color: var(--ink-3);
+    font-size: 11px;
+  }
+
+  .sensor-card.recommended .sensor-stat-label {
+    color: var(--ink-4);
+  }
+
+  .sensor-stat-val {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+  }
+
+  .tag-good { color: #222; }
+  .tag-warn { color: #555; }
+  .tag-bad { color: #222; }
+
+  .sensor-card.recommended .tag-good { color: #ccc; }
+  .sensor-card.recommended .tag-warn { color: #aaa; }
+  .sensor-card.recommended .tag-bad { color: #999; }
+
+  /* Crop visualizer */
+  .crop-vis-wrap {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .crop-vis {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .crop-vis-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: center;
+  }
+
+  .crop-canvas-wrap {
+    width: 100%;
+    aspect-ratio: 1;
+    position: relative;
+  }
+
+  .crop-canvas-wrap canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .crop-stats {
+    width: 100%;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .crop-stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 0.5px solid var(--paper-3);
+    color: var(--ink-3);
+  }
+
+  .crop-stat-row strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* Tradeoff table */
+  .tradeoff-grid {
+    display: grid;
+    grid-template-columns: 180px repeat(3, 1fr);
+    gap: 0;
+    margin-top: 20px;
+    border: 1px solid var(--paper-3);
+  }
+
+  .to-cell {
+    padding: 10px 14px;
+    font-size: 12px;
+    border-right: 0.5px solid var(--paper-3);
+    border-bottom: 0.5px solid var(--paper-3);
+  }
+
+  .to-cell:last-child { border-right: none; }
+
+  .to-header {
+    background: var(--paper-2);
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+
+  .to-header.active {
+    background: #222222;
+    color: #f4f4f4;
+  }
+
+  .to-row-label {
+    background: var(--paper-2);
+    color: var(--ink-3);
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .to-val {
+    font-size: 12px;
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+
+  .pill-good { background: #e8e8e8; color: #111; }
+  .pill-warn { background: #d8d8d8; color: #333; }
+  .pill-bad { background: #cccccc; color: #111; }
+
+  /* Decision block */
+  .decision {
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    background: var(--paper-2);
+    margin-top: 24px;
+  }
+
+  .decision-q {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+
+  .decision p {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+
+  .decision p:last-child { margin-bottom: 0; }
+
+  /* Path cards */
+  .paths {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .path-card {
+    padding: 20px 18px;
+    background: var(--paper-2);
+  }
+
+  .path-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--paper-3);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .path-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .path-body {
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .path-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 0.5px solid var(--paper-3);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: var(--ink-4);
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .page { padding: 32px 20px 60px; }
+    .sensor-grid, .crop-vis-wrap, .paths { grid-template-columns: 1fr; }
+    .tradeoff-grid { grid-template-columns: 120px repeat(3, 1fr); }
+    .to-cell { padding: 8px 8px; font-size: 11px; }
+  }
+
+  /* Availability section */
+  .avail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .avail-card {
+    background: var(--paper-2);
+    padding: 20px 18px;
+  }
+
+  .avail-card-featured {
+    background: #222222;
+    color: #f4f4f4;
+  }
+
+  .avail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .avail-name {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .avail-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+
+  .avail-card-featured .avail-sub {
+    color: var(--ink-4);
+  }
+
+  .avail-badge {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .avail-badge-green { background: #e0e0e0; color: #111; }
+  .avail-badge-amber { background: #d0d0d0; color: #333; }
+  .avail-badge-red { background: #c8c8c8; color: #111; }
+
+  .price-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 0.5px solid var(--paper-3);
+  }
+
+  .avail-card-featured .price-row {
+    border-bottom-color: rgba(255,255,255,0.1);
+  }
+
+  .price-tier {
+    background: var(--paper);
+    padding: 8px 10px;
+    border-radius: 2px;
+  }
+
+  .avail-card-featured .price-tier {
+    background: rgba(255,255,255,0.06);
+  }
+
+  .price-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+
+  .avail-card-featured .price-label {
+    color: var(--ink-4);
+  }
+
+  .price-val {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+
+  .price-note {
+    font-size: 10px;
+    color: var(--ink-3);
+    line-height: 1.4;
+  }
+
+  .avail-card-featured .price-note {
+    color: var(--ink-4);
+  }
+
+  .avail-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .avail-row {
+    display: flex;
+    flex-direction: column;
+    padding: 7px 0;
+    border-bottom: 0.5px solid var(--paper-3);
+    gap: 2px;
+  }
+
+  .avail-card-featured .avail-row {
+    border-bottom-color: rgba(255,255,255,0.08);
+  }
+
+  .avail-row:last-child { border-bottom: none; }
+
+  .avail-key {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+  }
+
+  .avail-card-featured .avail-key {
+    color: var(--ink-4);
+  }
+
+  .avail-val {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .cost-callout {
+    background: var(--paper-2);
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin-top: 20px;
+    border-radius: 0;
+  }
+
+  .cost-callout-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+
+  .cost-callout p {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+
+  .cost-callout p:last-child { margin-bottom: 0; }
+
+  .bom-table-wrap { margin-top: 8px; }
+
+  @media (max-width: 700px) {
+    .avail-grid { grid-template-columns: 1fr; }
+    .price-row { grid-template-columns: 1fr; }
+  }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <h1>Kinship Technologies — Internal</h1>
+      <h2>Sensor selection study<br><em>square capture + orientationless</em></h2>
+    </div>
+    <div class="header-right">
+      March 2026<br>
+      For: Hana + Abtin<br>
+      Camera v0.3
+    </div>
+  </header>
+
+  <!-- Thesis -->
+  <div class="thesis">
+    <div class="thesis-label">The thesis shift</div>
+    <p>Delivering on <strong>eyes in the world</strong> required moving from a 50mm baseline to <strong>30mm / 75° FOV</strong> — capturing peripheral presence rather than directed attention. The device lives in the hand, not at the eye.</p>
+    <p>Orientationless capture means the output must be <strong>1:1 square</strong>, cropped from the sensor's image circle regardless of how the device is held. These two constraints together — wide FOV + square crop — eliminate the IMX585 as the primary sensor and point toward a larger format.</p>
+  </div>
+
+  <!-- Section 1: The spec chain -->
+  <div class="section">
+    <div class="section-label">01 — The spec chain</div>
+    <div class="section-title">How one decision drives every other</div>
+    <div class="section-body">Every number downstream of "what does the image need to feel like" is deterministic. This is the chain.</div>
+
+    <table class="chain-table">
+      <tr>
+        <td>Target quality bar</td>
+        <td>ARRI / Mamiya RB67</td>
+        <td>Optical character, tonal transitions, dynamic range without flash</td>
+      </tr>
+      <tr>
+        <td>Capture geometry</td>
+        <td>1:1 square, orientationless</td>
+        <td>Sensor must yield equal H and V resolution in any rotation</td>
+      </tr>
+      <tr>
+        <td>Field of view</td>
+        <td>~75° diagonal</td>
+        <td>30mm full-frame equivalent — peripheral, not directed</td>
+      </tr>
+      <tr>
+        <td>Min square crop MP</td>
+        <td>≥ 8 MP</td>
+        <td>Below 6MP feels like a phone. 8MP+ is undeniable at output size.</td>
+      </tr>
+      <tr>
+        <td>Required sensor short axis</td>
+        <td>≥ 9mm</td>
+        <td>At 2.0µm pitch: 9mm ÷ 0.002mm = 4,500px → 20MP square</td>
+      </tr>
+      <tr>
+        <td>Required image circle</td>
+        <td>≥ 18mm</td>
+        <td>√2 × 9mm × 1.15 margin = 14.6mm min, 18mm for quality corners</td>
+      </tr>
+      <tr>
+        <td>Actual focal length</td>
+        <td>~20–22mm</td>
+        <td>30mm equiv on a ~1" sensor (crop factor ~1.4×)</td>
+      </tr>
+      <tr>
+        <td>Optical column diameter</td>
+        <td>~26–30mm</td>
+        <td>Image circle + housing. Must fit within 55mm hourglass body.</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Section 2: Sensor comparison -->
+  <div class="section">
+    <div class="section-label">02 — Sensors evaluated</div>
+    <div class="section-title">Three candidates, one target</div>
+    <div class="section-body">Ranked by fit against the square crop + quality constraints.</div>
+
+    <div class="sensor-grid">
+
+      <div class="sensor-card">
+        <div class="sensor-card-tag">Current spec</div>
+        <div class="sensor-card-name">IMX585</div>
+        <div class="sensor-card-format">Sony STARVIS 2 · 1/1.2"</div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Square crop</span>
+          <span class="sensor-stat-val tag-bad">4.75 MP</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Pixel pitch</span>
+          <span class="sensor-stat-val tag-good">2.9 µm</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Short axis</span>
+          <span class="sensor-stat-val">6.32 mm</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Image circle req.</span>
+          <span class="sensor-stat-val tag-good">~10mm</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Body fit (55mm)</span>
+          <span class="sensor-stat-val tag-good">Fits</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Low light (no flash)</span>
+          <span class="sensor-stat-val tag-good">Excellent</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Verdict</span>
+          <span class="sensor-stat-val tag-bad">Fails quality bar</span>
+        </div>
+      </div>
+
+      <div class="sensor-card recommended">
+        <div class="sensor-card-tag">Target spec</div>
+        <div class="sensor-card-name">IMX989</div>
+        <div class="sensor-card-format">Sony LYTIA · 1" · 50MP</div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Square crop</span>
+          <span class="sensor-stat-val tag-good">~20 MP</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Pixel pitch (binned)</span>
+          <span class="sensor-stat-val tag-good">3.2 µm eff.</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Short axis</span>
+          <span class="sensor-stat-val">9.8 mm</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Image circle req.</span>
+          <span class="sensor-stat-val tag-warn">~18mm</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Body fit (55mm)</span>
+          <span class="sensor-stat-val tag-warn">Tight / solvable</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Low light (no flash)</span>
+          <span class="sensor-stat-val tag-good">Best in class</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Verdict</span>
+          <span class="sensor-stat-val tag-good">Meets bar</span>
+        </div>
+      </div>
+
+      <div class="sensor-card">
+        <div class="sensor-card-tag">Alternative</div>
+        <div class="sensor-card-name">IMX678</div>
+        <div class="sensor-card-format">Sony STARVIS 2 · 1/1.8"</div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Square crop</span>
+          <span class="sensor-stat-val tag-bad">4.75 MP</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Pixel pitch</span>
+          <span class="sensor-stat-val tag-warn">2.0 µm</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Short axis</span>
+          <span class="sensor-stat-val">4.36 mm</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Image circle req.</span>
+          <span class="sensor-stat-val tag-good">~8mm</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Body fit (55mm)</span>
+          <span class="sensor-stat-val tag-good">Fits easily</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Low light (no flash)</span>
+          <span class="sensor-stat-val tag-warn">Very good</span>
+        </div>
+        <div class="sensor-stat">
+          <span class="sensor-stat-label">Verdict</span>
+          <span class="sensor-stat-val tag-bad">Fails quality bar</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Section 3: Crop visualizer -->
+  <div class="section">
+    <div class="section-label">03 — Crop geometry</div>
+    <div class="section-title">What each sensor yields in a circular device</div>
+    <div class="section-body">The outer circle is the device body (55mm). The gray ring is the optical column. The colored square is the usable 1:1 capture region. The blue rectangle is native sensor format.</div>
+
+    <div class="crop-vis-wrap" id="cropVis"></div>
+  </div>
+
+  <!-- Section 4: Tradeoff table -->
+  <div class="section">
+    <div class="section-label">04 — Tradeoff matrix</div>
+    <div class="section-title">No free lunch — the honest accounting</div>
+
+    <div class="tradeoff-grid">
+      <div class="to-cell to-header"></div>
+      <div class="to-cell to-header">IMX585</div>
+      <div class="to-cell to-header active">IMX989 ★</div>
+      <div class="to-cell to-header">IMX678</div>
+
+      <div class="to-cell to-row-label">Square crop MP</div>
+      <div class="to-cell to-val"><span class="pill pill-bad">4.75 MP</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">~20 MP</span></div>
+      <div class="to-cell to-val"><span class="pill pill-bad">4.75 MP</span></div>
+
+      <div class="to-cell to-row-label">Pixel size (low light)</div>
+      <div class="to-cell to-val"><span class="pill pill-good">2.9 µm</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">3.2 µm eff.</span></div>
+      <div class="to-cell to-val"><span class="pill pill-warn">2.0 µm</span></div>
+
+      <div class="to-cell to-row-label">Dynamic range</div>
+      <div class="to-cell to-val"><span class="pill pill-good">83 dB</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">~14 stops</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">83 dB</span></div>
+
+      <div class="to-cell to-row-label">Optical column size</div>
+      <div class="to-cell to-val"><span class="pill pill-good">~18mm</span></div>
+      <div class="to-cell to-val"><span class="pill pill-warn">~30mm</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">~14mm</span></div>
+
+      <div class="to-cell to-row-label">Body fit (55mm)</div>
+      <div class="to-cell to-val"><span class="pill pill-good">Fits</span></div>
+      <div class="to-cell to-val"><span class="pill pill-warn">Tight</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">Easy</span></div>
+
+      <div class="to-cell to-row-label">Power draw</div>
+      <div class="to-cell to-val"><span class="pill pill-good">Low</span></div>
+      <div class="to-cell to-val"><span class="pill pill-bad">High</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">Low</span></div>
+
+      <div class="to-cell to-row-label">Thermal (handheld)</div>
+      <div class="to-cell to-val"><span class="pill pill-good">Fine</span></div>
+      <div class="to-cell to-val"><span class="pill pill-bad">Needs solving</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">Fine</span></div>
+
+      <div class="to-cell to-row-label">Driver ecosystem</div>
+      <div class="to-cell to-val"><span class="pill pill-good">Mature</span></div>
+      <div class="to-cell to-val"><span class="pill pill-warn">Mobile OEM</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">Mature</span></div>
+
+      <div class="to-cell to-row-label">Optics cost</div>
+      <div class="to-cell to-val"><span class="pill pill-warn">High</span></div>
+      <div class="to-cell to-val"><span class="pill pill-bad">Very high</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">Lower</span></div>
+
+      <div class="to-cell to-row-label">Meets quality bar</div>
+      <div class="to-cell to-val"><span class="pill pill-bad">No</span></div>
+      <div class="to-cell to-val"><span class="pill pill-good">Yes</span></div>
+      <div class="to-cell to-val"><span class="pill pill-bad">No</span></div>
+    </div>
+  </div>
+
+  <!-- Section 5: Three paths -->
+  <div class="section">
+    <div class="section-label">05 — Forward paths</div>
+    <div class="section-title">Three options for Monday</div>
+
+    <div class="paths">
+      <div class="path-card">
+        <div class="path-num">01</div>
+        <div class="path-title">Ship IMX585, accept the crop</div>
+        <div class="path-body">4.75MP square crop. Bet on Golgi pipeline and computational photography to close the quality gap. Fastest to hardware, lowest engineering risk. The body and optics you've already scoped work. Honest downside: at output size, it will not feel like the best capture device ever made. That matters for Camera.</div>
+        <div class="path-tag tag-warn">Fastest · Quality compromise</div>
+      </div>
+
+      <div class="path-card" style="background: #222222; color: #f4f4f4;">
+        <div class="path-num" style="color: #555;">02</div>
+        <div class="path-title">IMX989, solve the thermal + body</div>
+        <div class="path-body" style="color: #ccc;">20MP square crop at 3.2µm effective pixels. The best handheld square capture that has ever existed. Engineering challenges are real: thermal management, power, body geometry, driver work. But they are finite problems. This is the product Camera needs to be to be undeniable.</div>
+        <div class="path-tag" style="color: #aaa;">Hardest · Strongest product</div>
+      </div>
+
+      <div class="path-card">
+        <div class="path-num">03</div>
+        <div class="path-title">Custom sensor target for Series A</div>
+        <div class="path-body">Define the ideal: 1/1.1" format, 2.0µm native, tall aspect ratio for square crop efficiency. Approach Sony Semiconductor semi-custom program. Not realistic at Seed — but all decisions made now should preserve this path. Ship IMX989 at v1, custom sensor at v2.</div>
+        <div class="path-tag tag-warn">Long horizon · Right destination</div>
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="decision-q">The question for Monday</div>
+      <p>Is thermal + power a product engineering problem we commit to solving — or a reason to ship a camera that doesn't meet the quality bar we've described to ourselves?</p>
+      <p>Path 02 is harder. It's also the only one that delivers on the thesis.</p>
+    </div>
+  </div>
+
+
+  <!-- Section 6: Availability & Cost -->
+  <div class="section">
+    <div class="section-label">06 — Availability &amp; cost</div>
+    <div class="section-title">What it actually costs to get these sensors</div>
+    <div class="section-body">Sensor pricing for hardware startups is opaque by design. What's below is grounded in confirmed distributor pricing and publicly known deal structures. All figures are bare die / sensor only — module pricing is 3–8× higher.</div>
+
+    <div class="avail-grid">
+
+      <div class="avail-card">
+        <div class="avail-header">
+          <div>
+            <div class="avail-name">IMX585</div>
+            <div class="avail-sub">Sony STARVIS 2 · 1/1.2"</div>
+          </div>
+          <div class="avail-badge avail-badge-green">Available now</div>
+        </div>
+
+        <div class="price-row">
+          <div class="price-tier">
+            <div class="price-label">1–10 units (proto)</div>
+            <div class="price-val">~$56–$70</div>
+            <div class="price-note">LCSC confirmed: $55.77/unit</div>
+          </div>
+          <div class="price-tier">
+            <div class="price-label">100–500 units (pilot)</div>
+            <div class="price-val">~$35–$50</div>
+            <div class="price-note">Volume break via distributors</div>
+          </div>
+          <div class="price-tier">
+            <div class="price-label">1K+ units (production)</div>
+            <div class="price-val">~$20–$30</div>
+            <div class="price-note">Direct Sony SSC or auth. dist.</div>
+          </div>
+        </div>
+
+        <div class="avail-details">
+          <div class="avail-row"><span class="avail-key">Distributor access</span><span class="avail-val good">LCSC, FRAMOS, Mouser, Arrow — in stock today</span></div>
+          <div class="avail-row"><span class="avail-key">Lead time (small qty)</span><span class="avail-val good">1–2 weeks</span></div>
+          <div class="avail-row"><span class="avail-key">Min order qty</span><span class="avail-val good">1 unit (eval), no MOQ constraint</span></div>
+          <div class="avail-row"><span class="avail-key">Driver / module ecosystem</span><span class="avail-val good">Mature — FRAMOS FSM module, Leopard Imaging, Arducam all ship today</span></div>
+          <div class="avail-row"><span class="avail-key">Sony SSC direct</span><span class="avail-val warn">Requires NDA + volume commitment for direct pricing</span></div>
+          <div class="avail-row"><span class="avail-key">Supply risk</span><span class="avail-val good">Low — widely stocked, established production</span></div>
+        </div>
+      </div>
+
+      <div class="avail-card avail-card-featured">
+        <div class="avail-header">
+          <div>
+            <div class="avail-name">IMX989</div>
+            <div class="avail-sub">Sony LYTIA · 1" · 50MP</div>
+          </div>
+          <div class="avail-badge avail-badge-amber">Procurement challenge</div>
+        </div>
+
+        <div class="price-row">
+          <div class="price-tier">
+            <div class="price-label">1–10 units (proto)</div>
+            <div class="price-val">~$120–$200</div>
+            <div class="price-note">Chinese module suppliers (est.)</div>
+          </div>
+          <div class="price-tier">
+            <div class="price-label">100–500 units (pilot)</div>
+            <div class="price-val">~$60–$100</div>
+            <div class="price-note">Requires Sony SSC relationship</div>
+          </div>
+          <div class="price-tier">
+            <div class="price-label">1K+ units (production)</div>
+            <div class="price-val">~$30–$60</div>
+            <div class="price-note">Volume deal, NDA required</div>
+          </div>
+        </div>
+
+        <div class="avail-details">
+          <div class="avail-row"><span class="avail-key">Development history</span><span class="avail-val warn">Co-developed by Xiaomi + Sony at $15M total ($7.5M each) — publicly confirmed</span></div>
+          <div class="avail-row"><span class="avail-key">Exclusivity</span><span class="avail-val good">Expired Nov 2022 — now available to all OEMs</span></div>
+          <div class="avail-row"><span class="avail-key">Distributor access</span><span class="avail-val warn">No standard dist. channel — Sony SSC direct or Chinese module suppliers</span></div>
+          <div class="avail-row"><span class="avail-key">Lead time (small qty)</span><span class="avail-val bad">4–12 weeks minimum; no off-shelf stock</span></div>
+          <div class="avail-row"><span class="avail-key">Driver / module ecosystem</span><span class="avail-val bad">Mobile OEM only — no embedded Linux MIPI driver stack; significant porting work</span></div>
+          <div class="avail-row"><span class="avail-key">Non-mobile access path</span><span class="avail-val warn">Chinese module makers (SincereFirst, Guangzhou) offer IMX989 modules — gray market risk, no Sony support</span></div>
+          <div class="avail-row"><span class="avail-key">Sony SSC direct</span><span class="avail-val bad">Requires flagship OEM relationship; Seed-stage companies not the target customer</span></div>
+          <div class="avail-row"><span class="avail-key">Supply risk</span><span class="avail-val bad">High — procurement path for a hardware startup is unclear and unvalidated</span></div>
+        </div>
+      </div>
+
+      <div class="avail-card">
+        <div class="avail-header">
+          <div>
+            <div class="avail-name">IMX678</div>
+            <div class="avail-sub">Sony STARVIS 2 · 1/1.8"</div>
+          </div>
+          <div class="avail-badge avail-badge-green">Available now</div>
+        </div>
+
+        <div class="price-row">
+          <div class="price-tier">
+            <div class="price-label">1–10 units (proto)</div>
+            <div class="price-val">~$16–$25</div>
+            <div class="price-note">LCSC confirmed: $16.15/unit</div>
+          </div>
+          <div class="price-tier">
+            <div class="price-label">100–500 units (pilot)</div>
+            <div class="price-val">~$10–$16</div>
+            <div class="price-note">Standard distributor pricing</div>
+          </div>
+          <div class="price-tier">
+            <div class="price-label">1K+ units (production)</div>
+            <div class="price-val">~$6–$12</div>
+            <div class="price-note">Direct or auth. dist. volume</div>
+          </div>
+        </div>
+
+        <div class="avail-details">
+          <div class="avail-row"><span class="avail-key">Distributor access</span><span class="avail-val good">LCSC, FRAMOS, IDS, Basler — in stock today</span></div>
+          <div class="avail-row"><span class="avail-key">Lead time (small qty)</span><span class="avail-val good">1–2 weeks</span></div>
+          <div class="avail-row"><span class="avail-key">Min order qty</span><span class="avail-val good">1 unit, no MOQ constraint</span></div>
+          <div class="avail-row"><span class="avail-key">Driver / module ecosystem</span><span class="avail-val good">Mature — IDS uEye, Basler, FRAMOS all ship evaluated modules</span></div>
+          <div class="avail-row"><span class="avail-key">Supply risk</span><span class="avail-val good">Low — high volume, widely adopted in robotics + machine vision</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="cost-callout">
+      <div class="cost-callout-label">The procurement reality for Camera at Seed</div>
+      <p>The IMX585 and IMX678 can be ordered today, one unit, no relationship required. The IMX989 cannot. It lives in a mobile OEM supply chain built for companies ordering millions of units annually. Getting it as a Seed-stage hardware startup means either going through Chinese module suppliers with no Sony support (supply chain risk, no driver stack, warranty exposure) or establishing a direct Sony SSC relationship — which requires demonstrating volume commitments that don't exist yet.</p>
+      <p>This is the actual blocker for Path 02, not the thermal engineering. The question for Monday is whether Kinship can establish a Sony SSC relationship now — through investor intros, through the Sigma/Håkan channel, or through a strategic partnership — that gets IMX989 access ahead of production volumes.</p>
+    </div>
+
+    <div class="bom-table-wrap">
+      <div class="section-label" style="margin-top: 24px;">Sensor cost in device BOM context</div>
+      <table class="chain-table">
+        <tr>
+          <td>IMX585 at 1K units</td>
+          <td>~$25–$30 / device</td>
+          <td>Known cost, orderable today, no relationship required</td>
+        </tr>
+        <tr>
+          <td>IMX678 at 1K units</td>
+          <td>~$8–$12 / device</td>
+          <td>Cheapest path — but fails the quality bar</td>
+        </tr>
+        <tr>
+          <td>IMX989 at 1K units</td>
+          <td>~$50–$80 / device (est.)</td>
+          <td>Estimated; no confirmed non-mobile pricing exists publicly</td>
+        </tr>
+        <tr>
+          <td>IMX989 optics premium</td>
+          <td>+$40–$80 / device (est.)</td>
+          <td>Larger image circle = larger, more complex lens elements</td>
+        </tr>
+        <tr>
+          <td>IMX989 total sensor+optics</td>
+          <td>~$90–$160 / device (est.)</td>
+          <td>vs. ~$60–$90 for IMX585 system. Delta is real but not disqualifying at Camera's price point.</td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span>Kinship Technologies · Confidential</span>
+    <span>Camera v0.3 · Sensor Study · March 2026</span>
+  </footer>
+
+</div>
+
+<script>
+// Draw crop geometry canvases
+const sensors = [
+  {
+    name: "IMX585",
+    tag: "Sony STARVIS 2 · 1/1.2\"",
+    shortMM: 6.32, longMM: 8.46,
+    pitchUm: 2.9,
+    color: "#c8502a"
+  },
+  {
+    name: "IMX989",
+    tag: "Sony LYTIA · 1\" · 50MP",
+    shortMM: 9.8, longMM: 13.1,
+    pitchUm: 1.6,
+    color: "#2a6b3c",
+    recommended: true
+  },
+  {
+    name: "IMX678",
+    tag: "Sony STARVIS 2 · 1/1.8\"",
+    shortMM: 4.36, longMM: 5.82,
+    pitchUm: 2.0,
+    color: "#c8502a"
+  }
+];
+
+const container = document.getElementById('cropVis');
+
+sensors.forEach(s => {
+  const squarePx = Math.round(s.shortMM / (s.pitchUm / 1000));
+  const squareMP = (squarePx * squarePx / 1e6).toFixed(1);
+  const squareDiag = Math.sqrt(2) * s.shortMM;
+  const imageCircle = (squareDiag * 1.15).toFixed(1);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'crop-vis';
+
+  wrap.innerHTML = `
+    <div class="crop-vis-label">${s.name}${s.recommended ? ' ★' : ''}</div>
+    <div class="crop-canvas-wrap"><canvas id="canvas_${s.name}" width="280" height="280"></canvas></div>
+    <div class="crop-stats">
+      <div class="crop-stat-row"><span>Square crop</span><strong>${squareMP} MP</strong></div>
+      <div class="crop-stat-row"><span>Sensor</span><strong>${s.shortMM} × ${s.longMM} mm</strong></div>
+      <div class="crop-stat-row"><span>Image circle</span><strong>~${imageCircle} mm</strong></div>
+      <div class="crop-stat-row"><span>Pixel pitch</span><strong>${s.pitchUm} µm</strong></div>
+    </div>
+  `;
+
+  container.appendChild(wrap);
+
+  // Draw after DOM is ready
+  requestAnimationFrame(() => {
+    const canvas = document.getElementById('canvas_' + s.name);
+    const ctx = canvas.getContext('2d');
+    const W = 280, H = 280;
+    const cx = W/2, cy = H/2;
+
+    // Scale: 55mm body = 240px diameter
+    const bodyMM = 55;
+    const scale = 230 / bodyMM;
+
+    const bodyR = bodyMM/2 * scale;
+    const optColR = parseFloat(imageCircle)/2 * scale;
+    const sensorLongPx = s.longMM * scale;
+    const sensorShortPx = s.shortMM * scale;
+    const squareSidePx = s.shortMM * scale;
+
+    // Device body circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, bodyR, 0, Math.PI*2);
+    ctx.fillStyle = '#f0f0f0';
+    ctx.fill();
+
+    // Optical column
+    ctx.beginPath();
+    ctx.arc(cx, cy, optColR, 0, Math.PI*2);
+    ctx.fillStyle = '#d8d8d8';
+    ctx.fill();
+
+    // Native sensor rectangle (blue)
+    ctx.fillStyle = 'rgba(55,138,221,0.15)';
+    ctx.strokeStyle = 'rgba(55,138,221,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.rect(cx - sensorLongPx/2, cy - sensorShortPx/2, sensorLongPx, sensorShortPx);
+    ctx.fill();
+    ctx.stroke();
+
+    // Square crop
+    ctx.fillStyle = 'rgba(80,80,80,0.18)';
+    ctx.strokeStyle = s.recommended ? 'rgba(30,30,30,0.9)' : 'rgba(100,100,100,0.8)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.rect(cx - squareSidePx/2, cy - squareSidePx/2, squareSidePx, squareSidePx);
+    ctx.fill();
+    ctx.stroke();
+
+    // Body outline
+    ctx.beginPath();
+    ctx.arc(cx, cy, bodyR, 0, Math.PI*2);
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Center dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 2, 0, Math.PI*2);
+    ctx.fillStyle = '#111111';
+    ctx.fill();
+
+    // Labels
+    ctx.font = '500 10px DM Mono, monospace';
+    ctx.fillStyle = '#7a7a7a';
+    ctx.textAlign = 'center';
+    if (bodyR < W/2) {
+      ctx.fillText('55mm body', cx, cy - bodyR - 6);
+    }
+  });
+});
+</script>
+
+</body>
+</html>
