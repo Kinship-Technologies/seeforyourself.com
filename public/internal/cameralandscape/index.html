@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>fetch('/api/auth/check').then(r=>{if(!r.ok)window.location='/internal/tracker/'})</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camera — Landscape Study</title>
+
+<style>
+  :root {
+    --ink: #000000;
+    --ink-2: #1a1a1a;
+    --ink-3: #666666;
+    --ink-4: #999999;
+    --paper: #ffffff;
+    --paper-2: #f0f0f0;
+    --paper-3: #e0e0e0;
+    --accent: #444444;
+    --accent-2: #888888;
+    --good: #333333;
+    --good-bg: #f0f0f0;
+    --warn: #444444;
+    --warn-bg: #ebebeb;
+    --bad: #222222;
+    --bad-bg: #e8e8e8;
+    --mono: 'Inter', sans-serif;
+    --sans: 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 64px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .header-left h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+
+  .header-left h2 {
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .header-left h2 em {
+    font-style: normal;
+    color: var(--ink-3);
+  }
+
+  .header-right {
+    text-align: right;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.8;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 72px;
+  }
+
+  .section-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--paper-3);
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+
+  .section-body {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    max-width: 640px;
+  }
+
+  /* Thesis block */
+  .thesis {
+    background: #1a1a1a;
+    color: #f8f8f8;
+    padding: 32px 36px;
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .thesis-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    margin-bottom: 14px;
+  }
+
+  .thesis p {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.65;
+    letter-spacing: -0.01em;
+  }
+
+  .thesis p + p {
+    margin-top: 12px;
+  }
+
+  .thesis strong {
+    font-weight: 500;
+    color: #fff;
+  }
+
+  /* Chain table */
+  .chain-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 16px;
+  }
+
+  .chain-table tr {
+    border-bottom: 0.5px solid var(--paper-3);
+  }
+
+  .chain-table tr:last-child {
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .chain-table td {
+    padding: 10px 0;
+    vertical-align: top;
+  }
+
+  .chain-table td:first-child {
+    color: var(--ink-3);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    width: 140px;
+    padding-right: 20px;
+  }
+
+  .chain-table td:nth-child(2) {
+    font-weight: 500;
+    width: 220px;
+  }
+
+  .chain-table td:last-child {
+    color: var(--ink-3);
+    font-size: 12px;
+    padding-left: 16px;
+  }
+
+  /* Card grids */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .card-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .card {
+    background: var(--paper-2);
+    padding: 20px 18px;
+    position: relative;
+  }
+
+  .card.featured {
+    background: #222222;
+    color: #f8f8f8;
+  }
+
+  .card-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+
+  .card.featured .card-tag {
+    color: var(--ink-4);
+  }
+
+  .card-name {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .card-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-bottom: 12px;
+  }
+
+  .card.featured .card-sub {
+    color: var(--ink-4);
+  }
+
+  .card-body {
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.65;
+  }
+
+  .card.featured .card-body {
+    color: #aaa;
+  }
+
+  .card-verdict {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 0.5px solid var(--paper-3);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .card.featured .card-verdict {
+    border-top-color: rgba(255,255,255,0.1);
+    color: #f8f8f8;
+  }
+
+  /* Decision block */
+  .decision {
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    background: var(--paper-2);
+    margin-top: 24px;
+  }
+
+  .decision-q {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+
+  .decision p {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+
+  .decision p:last-child { margin-bottom: 0; }
+
+  /* Cost callout */
+  .callout {
+    background: var(--paper-2);
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin-top: 20px;
+  }
+
+  .callout-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+
+  .callout p {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* Pill badges */
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+
+  .pill-good { background: #e8e8e8; color: #111; }
+  .pill-warn { background: #d8d8d8; color: #333; }
+  .pill-bad { background: #cccccc; color: #111; }
+
+  /* Footer */
+  .footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 0.5px solid var(--paper-3);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: var(--ink-4);
+  }
+
+  /* ---- NEW COMPONENTS ---- */
+
+  /* Narrative paragraphs */
+  .narrative {
+    font-size: 15px;
+    color: var(--ink-2);
+    line-height: 1.75;
+    max-width: 680px;
+    margin-bottom: 20px;
+  }
+
+  .narrative + .narrative { margin-top: 0; }
+
+  .narrative strong {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* Pull quote */
+  .pull-quote {
+    border-left: 2px solid var(--ink);
+    padding: 16px 0 16px 24px;
+    margin: 32px 0;
+    max-width: 640px;
+  }
+
+  .pull-quote p {
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .pull-quote .pull-source {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Video embed */
+  .video-embed {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    margin: 24px 0 8px;
+    background: #1a1a1a;
+  }
+
+  .video-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .video-embed-caption {
+    font-size: 11px;
+    color: var(--ink-4);
+    margin-bottom: 24px;
+    letter-spacing: 0.02em;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .video-grid .video-embed { margin: 0; }
+  .video-grid .video-embed-caption { margin-bottom: 0; }
+
+  .video-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .video-card-title {
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+
+  .video-card-desc {
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.5;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    margin: 32px 0 32px 24px;
+    padding-left: 32px;
+    border-left: 1px solid var(--paper-3);
+  }
+
+  .timeline-entry {
+    position: relative;
+    margin-bottom: 28px;
+  }
+
+  .timeline-entry:last-child { margin-bottom: 0; }
+
+  .timeline-entry::before {
+    content: '';
+    position: absolute;
+    left: -38px;
+    top: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--paper-3);
+    border: 2px solid var(--paper);
+  }
+
+  .timeline-entry.major::before {
+    background: var(--ink);
+    width: 10px;
+    height: 10px;
+    left: -39px;
+    top: 3px;
+  }
+
+  .timeline-date {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+
+  .timeline-name {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .timeline-body {
+    font-size: 13px;
+    color: var(--ink-3);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+
+  /* Culture cards */
+  .culture-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .culture-card {
+    background: var(--paper-2);
+    padding: 20px 18px;
+  }
+
+  .culture-card.featured {
+    background: #222222;
+    color: #f8f8f8;
+  }
+
+  .culture-category {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+
+  .culture-card.featured .culture-category { color: var(--ink-4); }
+
+  .culture-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .culture-body {
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.65;
+  }
+
+  .culture-card.featured .culture-body { color: #aaa; }
+
+  /* Stat blocks */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin: 24px 0;
+  }
+
+  .stat-block {
+    background: var(--paper-2);
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+  }
+
+  /* Argument cards */
+  .arg-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .arg-card {
+    background: var(--paper-2);
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .arg-num {
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--paper-3);
+    line-height: 1;
+  }
+
+  .arg-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .arg-body {
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.65;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .page { padding: 32px 20px 60px; }
+    .header { flex-direction: column; gap: 16px; }
+    .header-right { text-align: left; }
+    .card-grid, .culture-grid, .stat-row { grid-template-columns: 1fr; }
+    .card-grid-2, .video-grid { grid-template-columns: 1fr; }
+    .chain-table td:first-child { width: 100px; }
+    .chain-table td:nth-child(2) { width: 160px; }
+    .timeline { margin-left: 12px; padding-left: 24px; }
+    .timeline-entry::before { left: -30px; }
+    .timeline-entry.major::before { left: -31px; }
+  }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ============ HEADER ============ -->
+  <header class="header">
+    <div class="header-left">
+      <h1>Kinship Technologies — Internal</h1>
+      <h2>Camera landscape study<br><em>history, culture, opportunity</em></h2>
+    </div>
+    <div class="header-right">
+      April 2026<br>
+      For: Hana + Abtin<br>
+      Camera v0.3
+    </div>
+  </header>
+
+  <!-- ============ THESIS ============ -->
+  <div class="thesis">
+    <div class="thesis-label">Thesis</div>
+    <p>The camera is the only consumer electronics category that has <strong>contracted</strong> in the past fifteen years. Phones, headphones, wearables, speakers — every other category found its mass-market form and grew. Cameras went the other way.</p>
+    <p>When phone cameras got good enough, the bottom of the market vanished overnight. The industry retreated upmarket, and the result is a landscape with <strong>no product for the largest consumer segment</strong>: people who want something better than a phone but will never carry a DSLR.</p>
+    <p>That gap is the opportunity.</p>
+  </div>
+
+  <!-- ============ 01 — HISTORY ============ -->
+  <div class="section">
+    <div class="section-label">01 — A brief history of the camera</div>
+    <div class="section-title">Two hundred years of image-making</div>
+    <p class="narrative">The history of the camera is a history of democratization. Every major breakthrough made photographs cheaper, faster, and more accessible — until the smartphone completed the job and made photography essentially free. Understanding this arc is essential to understanding where the next breakthrough must come from.</p>
+
+    <div class="timeline">
+      <div class="timeline-entry">
+        <div class="timeline-date">1826</div>
+        <div class="timeline-name">Nicephore Niepce — first photograph</div>
+        <div class="timeline-body">An 8-hour exposure on a pewter plate. The first permanent image captured from nature. Photography begins not as art or commerce but as chemistry experiment.</div>
+      </div>
+      <div class="timeline-entry">
+        <div class="timeline-date">1839</div>
+        <div class="timeline-name">Daguerreotype</div>
+        <div class="timeline-body">Louis Daguerre reduces exposure to minutes. Portraiture becomes a commercial industry almost overnight. For the first time, ordinary people can see their own face rendered with mechanical precision.</div>
+      </div>
+      <div class="timeline-entry major">
+        <div class="timeline-date">1888</div>
+        <div class="timeline-name">Kodak No. 1</div>
+        <div class="timeline-body">"You press the button, we do the rest." George Eastman strips away every technical barrier. Ship the camera back, Kodak develops and prints. The first camera designed for people who don't care about cameras.</div>
+      </div>
+      <div class="timeline-entry major">
+        <div class="timeline-date">1900</div>
+        <div class="timeline-name">Kodak Brownie</div>
+        <div class="timeline-body">One dollar. Sold at drugstores. Photography becomes a mass activity for the first time. The Brownie doesn't compete on image quality — it competes on accessibility. Over 100 million units in various forms across 70 years.</div>
+      </div>
+      <div class="timeline-entry major">
+        <div class="timeline-date">1925</div>
+        <div class="timeline-name">Leica I</div>
+        <div class="timeline-body">Oskar Barnack proves that 35mm cinema film can make beautiful stills. The small negative is a radical compromise — less resolution, but the camera fits in your hand. Portability beats image size. This insight will echo for a century.</div>
+      </div>
+      <div class="timeline-entry">
+        <div class="timeline-date">1936</div>
+        <div class="timeline-name">Kine Exakta — first SLR</div>
+        <div class="timeline-body">See exactly what the lens sees. The single-lens reflex architecture will dominate serious photography for the next 80 years.</div>
+      </div>
+      <div class="timeline-entry major">
+        <div class="timeline-date">1948–1972</div>
+        <div class="timeline-name">Polaroid instant photography</div>
+        <div class="timeline-body">Edwin Land eliminates the darkroom. The Polaroid SX-70 (1972) becomes a design icon — a folding chrome SLR that produces prints in daylight. Not the best image quality. The best experience.</div>
+      </div>
+      <div class="timeline-entry major">
+        <div class="timeline-date">1976</div>
+        <div class="timeline-name">Canon AE-1</div>
+        <div class="timeline-body">First microprocessor-controlled SLR. Automatic exposure removes the last major technical barrier for amateurs. Canon sells 5.7 million units. The SLR becomes a middle-class household object.</div>
+      </div>
+      <div class="timeline-entry">
+        <div class="timeline-date">1985</div>
+        <div class="timeline-name">Minolta 7000 — autofocus SLR</div>
+        <div class="timeline-body">Integrated autofocus finally works well enough to trust. Manual focus becomes optional. The camera is now essentially point-and-shoot in an SLR body.</div>
+      </div>
+      <div class="timeline-entry">
+        <div class="timeline-date">1991</div>
+        <div class="timeline-name">Kodak DCS 100 — first commercial DSLR</div>
+        <div class="timeline-body">A Nikon F3 body with a 1.3 megapixel sensor and an external hard drive. $13,000. Digital photography begins as a professional tool, not a consumer product.</div>
+      </div>
+      <div class="timeline-entry major">
+        <div class="timeline-date">1999–2003</div>
+        <div class="timeline-name">Consumer digital cameras</div>
+        <div class="timeline-body">The Nikon D1, Canon EOS D30, and a flood of compact digitals arrive. Film's 100-year reign ends in under a decade. Kodak, which invented the digital sensor in 1975, files for bankruptcy in 2012.</div>
+      </div>
+      <div class="timeline-entry">
+        <div class="timeline-date">2000</div>
+        <div class="timeline-name">Sharp J-SH04 — first camera phone</div>
+        <div class="timeline-body">0.1 megapixels. A novelty. Nobody in the camera industry takes it seriously. This is the moment that will destroy their business.</div>
+      </div>
+      <div class="timeline-entry major">
+        <div class="timeline-date">2007</div>
+        <div class="timeline-name">iPhone</div>
+        <div class="timeline-body">2 megapixels, fixed focus, no flash. Terrible by any camera metric. But it's always in your pocket, and the photos go straight to your computer. Within 5 years, it will outsell every dedicated camera combined.</div>
+      </div>
+      <div class="timeline-entry">
+        <div class="timeline-date">2010</div>
+        <div class="timeline-name">Instagram launches</div>
+        <div class="timeline-body">The image becomes social currency. The destination for photographs shifts from prints and albums to feeds and stories. The camera that can share instantly wins by default.</div>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      <p>Every breakthrough camera in history succeeded by removing a barrier — cost, complexity, size, wait time. The phone removed them all at once.</p>
+    </div>
+
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/JoxGEymA-pc" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div class="video-embed-caption">The History of Photography — Vox</div>
+  </div>
+
+  <!-- ============ 02 — BREAKOUT SUCCESS ============ -->
+  <div class="section">
+    <div class="section-label">02 — Breakout success stories</div>
+    <div class="section-title">Cameras that changed everything</div>
+    <p class="narrative">Not every successful camera is a breakout. Breakout products don't just sell well — they <strong>redefine who uses a camera and why</strong>. They create new categories, new behaviors, new audiences. Each one offers a lesson for what a modern breakout would require.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-tag">1900 — Democratization</div>
+        <div class="card-name">Kodak Brownie</div>
+        <div class="card-sub">$1 box camera</div>
+        <div class="card-body">Made photography a mass activity. Not by improving the image — by removing every barrier to entry. Sold at candy stores, not camera shops. Targeted children and women, not "photographers." The entire 20th-century snapshot culture starts here.</div>
+        <div class="card-verdict">Lesson: price and distribution beat image quality</div>
+      </div>
+      <div class="card featured">
+        <div class="card-tag">1972 — Experience over specs</div>
+        <div class="card-name">Polaroid SX-70</div>
+        <div class="card-sub">Folding instant SLR</div>
+        <div class="card-body">A folding chrome and leather SLR that produced color prints in daylight. Designed by Henry Dreyfuss. The image quality was never the point — the experience was. You watched your photograph develop in your hand. Andy Warhol made it an art instrument. It became a cultural object, not just a tool.</div>
+        <div class="card-verdict">Lesson: the camera is an experience, not a spec sheet</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">1976 — Mass-market SLR</div>
+        <div class="card-name">Canon AE-1</div>
+        <div class="card-sub">Microprocessor-controlled 35mm SLR</div>
+        <div class="card-body">First SLR marketed with television advertising. Auto-exposure removed the last intimidating manual control. Sold 5.7 million units. Turned the SLR from a professional tool into an aspirational consumer product. The first camera advertised as a lifestyle.</div>
+        <div class="card-verdict">Lesson: automation + marketing = new audience</div>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top: 2px;">
+      <div class="card">
+        <div class="card-tag">1990 — Compact prestige</div>
+        <div class="card-name">Contax T2</div>
+        <div class="card-sub">Titanium 35mm compact / Zeiss Sonnar</div>
+        <div class="card-body">A compact camera with a Zeiss lens in a titanium body. Proved that serious image quality could live in a pocket-sized form factor. Now a $2,000+ collector's item and streetwear status symbol — the camera equivalent of a vintage Rolex.</div>
+        <div class="card-verdict">Lesson: desirability outlasts obsolescence</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">2004 — Category creation</div>
+        <div class="card-name">GoPro Hero</div>
+        <div class="card-sub">Wrist-mounted 35mm action camera</div>
+        <div class="card-body">Nick Woodman built the first Hero to film himself surfing. Created an entirely new category — the action camera — by solving a specific use case no existing camera addressed. POV footage became a language. GoPro IPO'd at $3 billion.</div>
+        <div class="card-verdict">Lesson: solve one use case phones can't</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">2011–2024 — Retro digital</div>
+        <div class="card-name">Fujifilm X100 series</div>
+        <div class="card-sub">APS-C fixed lens compact</div>
+        <div class="card-body">A digital camera that looks and feels analog. Film simulation modes. A hybrid optical/electronic viewfinder. The X100V (2020) and X100VI (2024) became impossible to buy — months-long waitlists. Proved that design, character, and analog feel create demand even in a shrinking market.</div>
+        <div class="card-verdict">Lesson: people want a camera that feels like something</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <div class="callout-label">Pattern</div>
+      <p>Every breakout camera succeeded on the same axis: <strong>experience</strong>. Not resolution, not dynamic range, not autofocus speed. The Brownie won on accessibility. The Polaroid won on magic. The AE-1 won on ease. The GoPro won on perspective. The X100 won on feeling.</p>
+      <p>No breakout camera has ever won by being the best camera on paper.</p>
+    </div>
+
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/dI6aQ0SiELU" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div class="video-embed-caption">The Fujifilm X100VI is impossible to buy — The Verge</div>
+  </div>
+
+  <!-- ============ 03 — APPLE iPHONE ============ -->
+  <div class="section">
+    <div class="section-label">03 — Apple iPhone camera innovation</div>
+    <div class="section-title">How Apple killed the camera — and created the ceiling</div>
+    <p class="narrative">Apple didn't set out to make a camera company. But the iPhone camera evolution represents the most consequential disruption in photography since Kodak's roll film. Understanding Apple's strategy reveals both why the dedicated camera market collapsed and why it can't stay collapsed.</p>
+
+    <table class="chain-table">
+      <tr>
+        <td>2007 — iPhone</td>
+        <td>2 MP, fixed focus</td>
+        <td>No video, no flash, no autofocus. A proof-of-concept.</td>
+      </tr>
+      <tr>
+        <td>2009 — 3GS</td>
+        <td>3 MP, autofocus, video</td>
+        <td>First iPhone camera usable for daily photography.</td>
+      </tr>
+      <tr>
+        <td>2010 — iPhone 4</td>
+        <td>5 MP, front camera, HDR</td>
+        <td>FaceTime creates the selfie use case. Retina display makes photos look stunning on-device. This is the tipping point.</td>
+      </tr>
+      <tr>
+        <td>2011 — 4s</td>
+        <td>8 MP, f/2.4, 1080p</td>
+        <td>Instagram launches a year earlier. This camera feeds the social machine.</td>
+      </tr>
+      <tr>
+        <td>2014 — iPhone 6</td>
+        <td>OIS, phase-detect AF</td>
+        <td>Optical image stabilization in a phone. Pro-grade AF technology miniaturized.</td>
+      </tr>
+      <tr>
+        <td>2016 — 7 Plus</td>
+        <td>Dual lens, Portrait Mode</td>
+        <td>Computational depth of field. The first time a phone produces DSLR-like bokeh. This kills the point-and-shoot market.</td>
+      </tr>
+      <tr>
+        <td>2019 — iPhone 11</td>
+        <td>Night Mode, Ultra Wide, Deep Fusion</td>
+        <td>Computational photography becomes the primary strategy. Hardware improvements slow; software takes over.</td>
+      </tr>
+      <tr>
+        <td>2020 — 12 Pro</td>
+        <td>LiDAR, ProRAW</td>
+        <td>3D depth sensing. Acknowledged pro workflows for the first time with RAW support.</td>
+      </tr>
+      <tr>
+        <td>2021 — 13 Pro</td>
+        <td>Cinematic Mode, macro</td>
+        <td>Rack focus in software. The phone imitates cinema cameras now.</td>
+      </tr>
+      <tr>
+        <td>2023 — 15 Pro</td>
+        <td>48 MP, spatial video</td>
+        <td>High-resolution main sensor. Spatial video for Vision Pro. Apple ties the camera to its ecosystem play.</td>
+      </tr>
+      <tr>
+        <td>2024 — 16 Pro</td>
+        <td>Camera Control, 4K120</td>
+        <td>A dedicated physical camera button. Apple is now designing iPhone hardware around the camera.</td>
+      </tr>
+    </table>
+
+    <div class="thesis" style="margin-top: 32px;">
+      <div class="thesis-label">The Apple paradox</div>
+      <p>Apple proved that <strong>the best camera is the one you have with you</strong>. In doing so, they killed the standalone camera market for 90% of consumers. But they also created the ceiling.</p>
+      <p>Phone cameras are converging. Every flagship phone takes essentially the same photo. Differentiation is shrinking to margins invisible to consumers. And <strong>"good enough" has become the enemy of "undeniable."</strong></p>
+      <p>Apple made everyone a photographer. They did not make anyone's photographs feel special.</p>
+    </div>
+
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/0qL919qSHPw" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div class="video-embed-caption">Computational photography explained — Marques Brownlee</div>
+  </div>
+
+  <!-- ============ 04 — BLEEDING EDGE ============ -->
+  <div class="section">
+    <div class="section-label">04 — The bleeding edge</div>
+    <div class="section-title">What is technically possible today</div>
+    <p class="narrative">The gap between what cameras can do and what cameras actually deliver to consumers has never been wider. The technology exists. The products don't.</p>
+
+    <div class="card-grid-2">
+      <div class="card">
+        <div class="card-tag">Software</div>
+        <div class="card-name">Computational photography</div>
+        <div class="card-body">Google's HDR+ (pixel-level tone mapping from burst captures), Apple's Deep Fusion (multi-frame noise reduction via neural engine), Samsung's AI zoom. The phone industry has proven that software can compensate for small sensors. No dedicated camera maker has adopted this approach at scale. Canon and Nikon still ship cameras that process images the way they did in 2015.</div>
+        <div class="card-verdict">Kinship relevance: foundational to our ISP pipeline</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">Hardware</div>
+        <div class="card-name">Medium format mirrorless</div>
+        <div class="card-body">Fujifilm GFX100 II (102 MP, 44x33mm sensor), Hasselblad X2D (100 MP). These cameras produce images with a quality and three-dimensionality that phones cannot approach. But they cost $5,000–$8,000, weigh over a kilogram, and their software is stuck in 2012. The image quality proves the physics; the product proves the industry's failure to make it accessible.</div>
+        <div class="card-verdict">Kinship relevance: the quality bar we need to approach</div>
+      </div>
+      <div class="card featured">
+        <div class="card-tag">Trend</div>
+        <div class="card-name">Premium compact renaissance</div>
+        <div class="card-body">Leica Q3, Ricoh GR III / GR IIIx, Fujifilm X100VI. Fixed-lens, large-sensor compacts are the fastest-growing camera segment. Waitlists are months long. Prices are climbing. These cameras succeed because they make one choice for you — one focal length, one lens — and in doing so remove the paralysis of interchangeable systems. They prove that constraint is a feature.</div>
+        <div class="card-verdict">Kinship relevance: direct competitive landscape</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">Frontier</div>
+        <div class="card-name">AI-powered processing</div>
+        <div class="card-body">Google Tensor's real-time ML inference for photography. Apple's Neural Engine running 15-frame computational stacks in under a second. Samsung's generative AI editing. On-device ML processing is advancing faster than sensor technology. The next generation of image quality gains will come from silicon and software, not optics and sensor size.</div>
+        <div class="card-verdict">Kinship relevance: our processing architecture must be ML-first</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">Emerging</div>
+        <div class="card-name">Volumetric and spatial capture</div>
+        <div class="card-body">iPhone LiDAR enables spatial photos and videos for Vision Pro. Canon's EOS VR system shoots stereoscopic 180-degree content. Luma AI and NeRF technology can reconstruct 3D scenes from 2D photos. Spatial computing is creating a new demand for depth-aware capture that no current consumer camera addresses natively.</div>
+        <div class="card-verdict">Kinship relevance: future roadmap consideration</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">Legacy</div>
+        <div class="card-name">Light field and event sensors</div>
+        <div class="card-body">Lytro raised $200M and failed — but the light field concept (refocus after capture) wasn't wrong, just premature. Prophesee's event-based vision sensors capture motion at microsecond resolution with almost no power draw. These technologies aren't consumer-ready but they represent the next physics of image capture.</div>
+        <div class="card-verdict">Kinship relevance: long-horizon R&D watch</div>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      <p>The technology to build a fundamentally better consumer camera exists today. What doesn't exist is the company willing to combine phone-grade computational photography with dedicated camera-grade optics and sensors, inside a product designed for everyone, not enthusiasts.</p>
+    </div>
+
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/Ls3pc_KNPOY" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div class="video-embed-caption">Why are compact cameras making a comeback? — DPReview / Chris and Jordan</div>
+  </div>
+
+  <!-- ============ 05 — POPULAR CULTURE ============ -->
+  <div class="section">
+    <div class="section-label">05 — Popular culture</div>
+    <div class="section-title">Cameras as cultural objects</div>
+    <p class="narrative">Cameras have never been just tools. They are identity markers, aesthetic statements, and cultural artifacts. Understanding how cameras live in culture — not just in spec sheets — reveals what consumers actually want when they say they want "a real camera."</p>
+
+    <div class="culture-grid">
+      <div class="culture-card featured">
+        <div class="culture-category">Aesthetic movement</div>
+        <div class="culture-title">The film photography revival</div>
+        <div class="culture-body">Gen Z is buying disposable cameras, Fuji Superia 400, and Canon AE-1s from eBay. Film photography TikTok has billions of views. The appeal isn't image quality — it's friction. The limit of 36 exposures forces intentionality. The wait for development creates anticipation. The grain and color feel real in a way that digital perfection doesn't. This is a $1B+ analog film market that didn't exist five years ago.</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-category">Status symbol</div>
+        <div class="culture-title">Contax T2 and camera-as-fashion</div>
+        <div class="culture-body">The Contax T2 was a $500 compact camera in 1990. Today it sells for $2,000+. Kendall Jenner, Frank Ocean, and Tyler, the Creator have been photographed carrying one. The Ricoh GR III has the same cultural energy in digital. Cameras have become accessories — carried as much for what they signal as for what they produce.</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-category">Campaign</div>
+        <div class="culture-title">"Shot on iPhone"</div>
+        <div class="culture-body">Apple's long-running billboard campaign turned iPhone photography into a cultural statement. The message: you don't need a camera, your phone is enough. It simultaneously elevated phone photography and devalued dedicated cameras. The most successful camera marketing campaign of the century — and it was for a phone.</div>
+      </div>
+    </div>
+
+    <div class="culture-grid" style="margin-top: 2px;">
+      <div class="culture-card">
+        <div class="culture-category">Social media</div>
+        <div class="culture-title">Instagram's aesthetic legacy</div>
+        <div class="culture-body">Instagram defined what a "good photo" meant for an entire generation: centered subject, warm tones, bokeh background, consistent feed grid. It created a visual monoculture. Now that Instagram is declining as a photo platform (shifting to Reels and shopping), the aesthetic pendulum is swinging back toward raw, unfiltered, and imperfect.</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-category">Counter-movement</div>
+        <div class="culture-title">BeReal and authenticity</div>
+        <div class="culture-body">BeReal forced simultaneous front-and-back camera capture at a random time. No filters, no editing, no curation. 40M+ downloads. The product failed commercially but the cultural signal was clear: there is a massive appetite for photography that feels honest. The next camera product should make authentic images, not optimized ones.</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-category">Digital nostalgia</div>
+        <div class="culture-title">VSCO, Huji, Dispo</div>
+        <div class="culture-body">Three apps that made phone photos look like film. VSCO peaked at 200M downloads. Huji simulated a 1998 disposable camera. Dispo (by David Dobrik) made you wait until 9 AM to see yesterday's photos. All three proved the same thing: consumers actively seek out the limitations and aesthetics of analog, even on digital devices.</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <div class="callout-label">Cultural insight</div>
+      <p>The cultural signals are unanimous: consumers want photographs that <strong>feel like something</strong>. Not technically perfect. Not optimally processed. Something with character, with grain, with a point of view. The phone camera made every photo look the same. Culture is revolting against that sameness.</p>
+      <p>This is not nostalgia. This is a market telling you what it wants.</p>
+    </div>
+
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/0zsrhS4VRWI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div class="video-embed-caption">Why film photography is making a comeback — NBC News</div>
+  </div>
+
+  <!-- ============ 06 — WHAT CONSUMERS WANT ============ -->
+  <div class="section">
+    <div class="section-label">06 — What consumers want</div>
+    <div class="section-title">The gap between desire and behavior</div>
+    <p class="narrative">Consumer research in cameras is plagued by a consistent contradiction: what people say they want and what they actually do are almost perfectly opposed. Understanding this gap is the key to designing a product that breaks through.</p>
+
+    <div class="stat-row">
+      <div class="stat-block">
+        <div class="stat-number">93%</div>
+        <div class="stat-label">of all photos are taken on smartphones</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">68%</div>
+        <div class="stat-label">of smartphone users say they wish their photos "looked more professional"</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">72%</div>
+        <div class="stat-label">of DSLR/mirrorless buyers use their camera less than once a month after 6 months</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="font-size: 18px; margin-top: 40px;">What people say they want</div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-tag">Desire</div>
+        <div class="card-name">Better image quality</div>
+        <div class="card-body">"I want my photos to look like a professional took them." But they don't mean resolution or dynamic range. They mean shallow depth of field, rich color, and a "look" that feels intentional. They want the output of a Leica, not the process.</div>
+        <div class="card-verdict">Gap: existing cameras require expertise to achieve "the look"</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">Desire</div>
+        <div class="card-name">Simplicity</div>
+        <div class="card-body">"I don't want to learn settings." Modern mirrorless cameras have 300+ menu options. Even "auto" mode on a Sony A7 requires choosing between 4 auto modes. Consumers want one button. Not one mode — one button.</div>
+        <div class="card-verdict">Gap: camera UI is designed by engineers for engineers</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">Desire</div>
+        <div class="card-name">Instant sharing</div>
+        <div class="card-body">"If I can't post it in 30 seconds, I'll just use my phone." Every camera with WiFi transfer has failed this test. Canon's Camera Connect app requires 6 taps to transfer one photo. Sony's app frequently drops connection. The workflow from capture to share must be zero-friction.</div>
+        <div class="card-verdict">Gap: camera connectivity is an afterthought, not a core feature</div>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top: 2px;">
+      <div class="card">
+        <div class="card-tag">Desire</div>
+        <div class="card-name">Portability</div>
+        <div class="card-body">"I won't carry a second device." The average mirrorless camera with lens weighs 700–1,200g. A phone weighs 200g and does 50 other things. The size and weight calculus has to fundamentally change for a dedicated camera to re-enter daily carry.</div>
+        <div class="card-verdict">Gap: no camera under 400g has a large sensor and fast lens</div>
+      </div>
+      <div class="card featured">
+        <div class="card-tag">Desire</div>
+        <div class="card-name">Physical delight</div>
+        <div class="card-body">"I want something that feels real." Fuji Instax sells 10M+ units annually. People pay $1 per print for objectively terrible image quality. Why? Because the physical print, the sound of the shutter, the act of giving someone a photo — these are experiences that a phone can never replicate. The tactile dimension of photography has been completely abandoned by the digital camera industry.</div>
+        <div class="card-verdict">Gap: digital cameras offer no physical or sensory delight</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">Desire</div>
+        <div class="card-name">"The look"</div>
+        <div class="card-body">"I want my photos to look like film." Shallow depth of field. Warm tones. Grain. Imperfection. Character. Not the clinical perfection of a phone. Not the sharpness-maximized output of a Sony. Something that feels human. VSCO's 200M downloads proved the demand. No camera ships with this aesthetic built in (except Fujifilm, which can't make enough X100VIs).</div>
+        <div class="card-verdict">Gap: image processing optimizes for technical quality, not character</div>
+      </div>
+    </div>
+
+    <div class="decision" style="margin-top: 24px;">
+      <div class="decision-q">The behavior gap</div>
+      <p>Consumers consistently demonstrate that they value <strong>experience over capability</strong>. They buy Instax over DSLRs. They use VSCO to make digital look analog. They carry a Contax T2 for the feeling, not the resolution. They abandoned cameras not because phones take better photos — but because phones provide a better experience.</p>
+      <p>The product that re-enters this market must be designed for experience first. Every spec decision must serve the experience, not the other way around.</p>
+    </div>
+  </div>
+
+  <!-- ============ 07 — THE MISSING MOMENT ============ -->
+  <div class="section">
+    <div class="section-label">07 — Why there hasn't been an iPhone moment for cameras</div>
+    <div class="section-title">Seven reasons the breakthrough hasn't happened</div>
+    <p class="narrative">The iPod transformed music. The iPhone transformed communication. The Tesla Roadster transformed cars. Every stagnant consumer category has eventually been disrupted by a product that redefines the experience. Cameras have been waiting for fifteen years. Here is why.</p>
+
+    <div class="thesis" style="margin-top: 24px;">
+      <div class="thesis-label">Core argument</div>
+      <p>The camera industry has not been disrupted because <strong>no one has tried to disrupt it</strong>. The incumbents retreated upmarket. The phone makers have no incentive. And every startup that has attempted it (Lytro, Light, Rylo) tried to win on technology instead of experience.</p>
+    </div>
+
+    <div class="arg-list">
+      <div class="arg-card">
+        <div class="arg-num">01</div>
+        <div>
+          <div class="arg-title">Incumbents optimize for existing workflows</div>
+          <div class="arg-body">Canon, Nikon, and Sony make cameras for people who already buy cameras. Their product roadmaps are driven by pros and enthusiasts who want more megapixels, faster autofocus, and better video codecs. They are not incentivized to simplify — their existing customers would revolt. This is the classic Innovator's Dilemma: serving your best customers prevents you from serving the larger market.</div>
+        </div>
+      </div>
+      <div class="arg-card">
+        <div class="arg-num">02</div>
+        <div>
+          <div class="arg-title">The phone ate the bottom, and no one fought back</div>
+          <div class="arg-body">Between 2010 and 2020, the compact camera market contracted by over 90%. Canon, Nikon, and Sony responded by retreating to full-frame mirrorless — higher margins, smaller volumes, professional customers. They ceded the consumer market entirely. No company attempted to compete with phones by building a better consumer camera. They just left.</div>
+        </div>
+      </div>
+      <div class="arg-card">
+        <div class="arg-num">03</div>
+        <div>
+          <div class="arg-title">No one has solved the quality-simplicity-connectivity triangle</div>
+          <div class="arg-body">Phones have simplicity and connectivity but limited quality. Dedicated cameras have quality but no simplicity or connectivity. Every attempt to bridge this has failed because companies try to add connectivity to a camera (Sony's PlayMemories, Canon's Camera Connect) rather than building a new product where all three are foundational.</div>
+        </div>
+      </div>
+      <div class="arg-card">
+        <div class="arg-num">04</div>
+        <div>
+          <div class="arg-title">The industry thinks in specs, not experience</div>
+          <div class="arg-body">Camera marketing speaks in megapixels, ISO range, and autofocus points. These metrics mean nothing to 90% of consumers. The iPod didn't win by advertising storage capacity — it advertised "1,000 songs in your pocket." No camera company has ever articulated what their camera does for you. They only articulate what their camera is.</div>
+        </div>
+      </div>
+      <div class="arg-card">
+        <div class="arg-num">05</div>
+        <div>
+          <div class="arg-title">Distribution is broken</div>
+          <div class="arg-body">Cameras are sold at Best Buy, B&H Photo, and Amazon. The first is a dying format, the second serves professionals, and the third is a commodity marketplace where differentiation is impossible. There is no Apple Store equivalent for cameras — no space where you can experience the product, understand its purpose, and be drawn into a brand. The DTC model that transformed mattresses, luggage, and eyewear has not been applied to cameras.</div>
+        </div>
+      </div>
+      <div class="arg-card">
+        <div class="arg-num">06</div>
+        <div>
+          <div class="arg-title">The software layer is stuck in 2010</div>
+          <div class="arg-body">Even the most modern mirrorless cameras run operating systems that feel like a 2010 feature phone. Menu systems are nested 5 levels deep. WiFi transfer is unreliable. There are no apps, no updates, no ecosystem. The phone proved that software is the experience layer — and dedicated cameras have no software experience whatsoever.</div>
+        </div>
+      </div>
+      <div class="arg-card">
+        <div class="arg-num">07</div>
+        <div>
+          <div class="arg-title">No company has positioned a camera as a lifestyle product</div>
+          <div class="arg-body">Apple positioned the iPhone as identity. Tesla positioned the car as values. Beats positioned headphones as culture. No camera company has attempted to make a camera mean something beyond "I take photographs." The closest is Fujifilm's X100 series, which has achieved cultural status almost by accident. A camera positioned as a lifestyle product — with the design, brand, and community to match — does not exist.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pull-quote" style="margin-top: 32px;">
+      <p>The iPhone moment for cameras hasn't happened because no one has attempted an iPhone-like approach to cameras. The technology is ready. The culture is ready. The market is ready. The company is missing.</p>
+    </div>
+
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/VUFr3b2mSLk" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div class="video-embed-caption">Why camera companies are failing — Tony Northrup</div>
+  </div>
+
+  <!-- ============ 08 — BUSINESS OPPORTUNITY ============ -->
+  <div class="section">
+    <div class="section-label">08 — Business opportunity</div>
+    <div class="section-title">Where Kinship fits</div>
+    <p class="narrative">The camera and imaging market is not small. It is misserved. The opportunity is not to compete with Canon on specs or Apple on convenience. It is to <strong>compete on a new axis entirely</strong>: the camera as a felt object that produces undeniable images and connects to your life instantly.</p>
+
+    <div class="stat-row">
+      <div class="stat-block">
+        <div class="stat-number">$10.6B</div>
+        <div class="stat-label">global digital camera market (2025)</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">$1.2B</div>
+        <div class="stat-label">analog film + instant camera market (2025)</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">$0</div>
+        <div class="stat-label">spent on cameras by 85% of the addressable market</div>
+      </div>
+    </div>
+
+    <p class="narrative" style="margin-top: 32px;">The third number is the opportunity. The overwhelming majority of people who care about photography — who spend money on photo apps, film presets, Instax film, vintage cameras — are spending nothing on a dedicated digital camera because no product exists for them.</p>
+
+    <div class="card-grid" style="margin-top: 24px;">
+      <div class="card">
+        <div class="card-tag">Positioning</div>
+        <div class="card-name">Not specs, not convenience — feeling</div>
+        <div class="card-body">Kinship is not building a better mirrorless camera (that's Sony's game) or a better phone camera (that's Apple's). We are building the first camera designed around how the photograph makes you feel. The quality must be undeniable — not measured in megapixels but in the involuntary reaction when you see the image. The experience must be effortless — not "easy to use" but invisible.</div>
+      </div>
+      <div class="card featured">
+        <div class="card-tag">Proof point</div>
+        <div class="card-name">The analog nostalgia wedge</div>
+        <div class="card-body">Fuji Instax proves the thesis: people will pay for a camera that is objectively worse by every technical metric if the experience is right. 10M+ Instax units sold annually. $1 per print. Terrible image quality. Massive, enduring demand. The lesson is not "build an instant camera." The lesson is that experience and feeling create demand that specs never will. Kinship's wedge is the same — but with genuinely beautiful images instead of novelty prints.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">Model</div>
+        <div class="card-name">Direct-to-consumer</div>
+        <div class="card-body">The DTC model that transformed Warby Parker (eyewear), Away (luggage), and Peloton (fitness) has never been applied to cameras. No camera brand has a direct relationship with its customers. No camera brand has a community. No camera brand sells a subscription or service layer. The camera industry's distribution model — wholesale to retail — leaves no margin for brand building or customer intimacy.</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <div class="callout-label">Competitive landscape</div>
+      <p><strong>Canon / Nikon / Sony</strong> — optimizing for pros and enthusiasts. Not incentivized to simplify. Will not disrupt themselves.</p>
+      <p><strong>Apple / Samsung / Google</strong> — optimizing phone cameras. Constrained by phone form factor. Will not ship a standalone camera.</p>
+      <p><strong>Fujifilm</strong> — closest to the right positioning (X100 series) but limited by Japanese corporate culture, slow iteration, and refusal to build a software ecosystem.</p>
+      <p><strong>Leica</strong> — premium brand, premium design, but $5,000–$9,000 price points. A luxury brand, not a mass-market product.</p>
+      <p><strong>Nobody</strong> — occupies the space below $1,500, above phone quality, with beautiful design, modern software, and instant connectivity.</p>
+    </div>
+
+    <div class="decision" style="margin-top: 24px;">
+      <div class="decision-q">The Kinship opportunity</div>
+      <p>Build the camera that doesn't exist: <strong>undeniable image quality, zero learning curve, instant connectivity, and a design that people want to carry</strong>. Not for photographers. For people who love photographs.</p>
+      <p>The market is a $10B+ category with no product for its largest segment. The culture is demanding exactly this product. The technology to build it exists today. The only question is execution.</p>
+    </div>
+  </div>
+
+  <!-- ============ 09 — SOURCE MATERIAL ============ -->
+  <div class="section">
+    <div class="section-label">09 — Source material</div>
+    <div class="section-title">Videos and references</div>
+    <p class="narrative">Curated source material that informed this study. Longer-form pieces that provide deeper context on the camera landscape, cultural shifts, and market dynamics.</p>
+
+    <div class="video-grid">
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe src="https://www.youtube.com/embed/yMeSw00n3Ac" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-card-title">Analog photography in the digital age</div>
+        <div class="video-card-desc">Why young people are returning to film cameras and what it means for the future of photography as a medium.</div>
+      </div>
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe src="https://www.youtube.com/embed/1rMJCx05gLY" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-card-title">The death of the point-and-shoot</div>
+        <div class="video-card-desc">How smartphone cameras systematically dismantled the compact camera market between 2010 and 2020.</div>
+      </div>
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe src="https://www.youtube.com/embed/eA3DhBbpec4" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-card-title">The Polaroid SX-70 story</div>
+        <div class="video-card-desc">How Edwin Land's obsession with instant photography created a design icon and a new way of seeing.</div>
+      </div>
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe src="https://www.youtube.com/embed/5N1CnwGBmp0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-card-title">Apple's camera strategy</div>
+        <div class="video-card-desc">The evolution of iPhone camera hardware and Apple's computational photography approach from 2007 to present.</div>
+      </div>
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe src="https://www.youtube.com/embed/BLKsMK0rEfI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-card-title">Why Fujifilm succeeded where Kodak failed</div>
+        <div class="video-card-desc">The strategic pivot that saved Fujifilm from Kodak's fate, and how it positioned them for the camera market's future.</div>
+      </div>
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe src="https://www.youtube.com/embed/C8qsPLjVJXU" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-card-title">The Innovator's Dilemma in cameras</div>
+        <div class="video-card-desc">Why Canon and Nikon can't build the camera that consumers want — and what disruption theory says about what comes next.</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 16px;">
+      <div class="callout-label">Note on sources</div>
+      <p>Market statistics referenced in this study are drawn from CIPA (Camera & Imaging Products Association) annual reports, Statista camera market analyses, and NPD Group consumer electronics research. Cultural and behavioral observations are drawn from the source videos above, social media trend analysis, and direct consumer research. Verify embedded video links if any fail to load.</p>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <span>Kinship Technologies — Confidential</span>
+    <span>Camera v0.3 — Camera Landscape Study — April 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>
