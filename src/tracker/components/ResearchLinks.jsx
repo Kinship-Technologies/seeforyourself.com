@@ -12,6 +12,12 @@ const RESEARCH = [
     href: '/internal/hapticsstudy',
   },
   {
+    tag: 'Study',
+    title: 'Camera Landscape Study',
+    desc: 'Camera history, breakout products, iPhone disruption, bleeding edge, consumer behavior, market opportunity.',
+    href: '/internal/cameralandscape',
+  },
+  {
     tag: 'UX Map',
     title: 'Physical Interaction Map',
     desc: 'Maxime le Grelle \u2014 MVP UX flow, physical interfaces, capture modes, settings.',
