@@ -616,6 +616,187 @@
     line-height: 1.65;
   }
 
+  /* Competitor table */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 20px;
+  }
+
+  .comp-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 10px 12px;
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .comp-table td {
+    padding: 10px 12px;
+    border-bottom: 0.5px solid var(--paper-3);
+    vertical-align: top;
+  }
+
+  .comp-table tr:last-child td { border-bottom: 1px solid var(--ink); }
+
+  .comp-table .comp-name {
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .comp-table .comp-sub {
+    color: var(--ink-3);
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .comp-table .comp-highlight td {
+    background: #f7f7f7;
+  }
+
+  /* Price map */
+  .price-map {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  .price-tier-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0;
+    border-bottom: 0.5px solid var(--paper-3);
+  }
+
+  .price-tier-row:last-child { border-bottom: 1px solid var(--ink); }
+
+  .price-tier-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-3);
+    padding: 12px 16px 12px 0;
+    text-align: right;
+    border-right: 1px solid var(--paper-3);
+  }
+
+  .price-tier-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 16px;
+    align-items: center;
+  }
+
+  .price-tier-chip {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    background: var(--paper-2);
+    white-space: nowrap;
+  }
+
+  .price-tier-chip.kinship {
+    background: #222;
+    color: #f8f8f8;
+    font-weight: 500;
+  }
+
+  /* Design era cards */
+  .era-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .era-card {
+    background: var(--paper-2);
+    padding: 20px 18px;
+  }
+
+  .era-card.dark {
+    background: #222;
+    color: #f8f8f8;
+  }
+
+  .era-dates {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+
+  .era-card.dark .era-dates { color: var(--ink-4); }
+
+  .era-name {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .era-ref {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  .era-card.dark .era-ref { color: var(--ink-4); }
+
+  .era-body {
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.65;
+  }
+
+  .era-card.dark .era-body { color: #aaa; }
+
+  /* Startup graveyard */
+  .startup-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .startup-card {
+    background: var(--paper-2);
+    padding: 16px 14px;
+  }
+
+  .startup-status {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .startup-status.dead { color: var(--ink-4); }
+  .startup-status.alive { color: var(--ink-2); }
+
+  .startup-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .startup-body {
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.6;
+  }
+
   /* Responsive */
   @media (max-width: 700px) {
     .page { padding: 32px 20px 60px; }
@@ -628,6 +809,10 @@
     .timeline { margin-left: 12px; padding-left: 24px; }
     .timeline-entry::before { left: -30px; }
     .timeline-entry.major::before { left: -31px; }
+    .era-grid, .startup-grid { grid-template-columns: 1fr; }
+    .comp-table { font-size: 11px; }
+    .comp-table th, .comp-table td { padding: 8px 8px; }
+    .price-tier-row { grid-template-columns: 80px 1fr; }
   }
 
 </style>
@@ -740,9 +925,9 @@
     </div>
 
     <div class="video-embed">
-      <iframe src="https://www.youtube.com/embed/JoxGEymA-pc" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      <iframe src="https://www.youtube.com/embed/XaGUL8B-BrE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
     </div>
-    <div class="video-embed-caption">The History of Photography — Vox</div>
+    <div class="video-embed-caption">Illuminating Photography: From camera obscura to camera phone — TED-Ed</div>
   </div>
 
   <!-- ============ 02 — BREAKOUT SUCCESS ============ -->
@@ -806,9 +991,9 @@
     </div>
 
     <div class="video-embed">
-      <iframe src="https://www.youtube.com/embed/dI6aQ0SiELU" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      <iframe src="https://www.youtube.com/embed/AdDIy0c5ZGo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
     </div>
-    <div class="video-embed-caption">The Fujifilm X100VI is impossible to buy — The Verge</div>
+    <div class="video-embed-caption">Why Fujifilm Survived (and Kodak Didn't) — Asianometry</div>
   </div>
 
   <!-- ============ 03 — APPLE iPHONE ============ -->
@@ -883,9 +1068,9 @@
     </div>
 
     <div class="video-embed">
-      <iframe src="https://www.youtube.com/embed/0qL919qSHPw" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      <iframe src="https://www.youtube.com/embed/8FpPSMIB4uA" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
     </div>
-    <div class="video-embed-caption">Computational photography explained — Marques Brownlee</div>
+    <div class="video-embed-caption">Reviewing EVERY iPhone Ever — Marques Brownlee</div>
   </div>
 
   <!-- ============ 04 — BLEEDING EDGE ============ -->
@@ -938,9 +1123,9 @@
     </div>
 
     <div class="video-embed">
-      <iframe src="https://www.youtube.com/embed/Ls3pc_KNPOY" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      <iframe src="https://www.youtube.com/embed/MZ8giCWDcyE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
     </div>
-    <div class="video-embed-caption">Why are compact cameras making a comeback? — DPReview / Chris and Jordan</div>
+    <div class="video-embed-caption">Smartphone Cameras vs Reality — Marques Brownlee</div>
   </div>
 
   <!-- ============ 05 — POPULAR CULTURE ============ -->
@@ -992,9 +1177,9 @@
     </div>
 
     <div class="video-embed">
-      <iframe src="https://www.youtube.com/embed/0zsrhS4VRWI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      <iframe src="https://www.youtube.com/embed/vk4ylwPtF3c" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
     </div>
-    <div class="video-embed-caption">Why film photography is making a comeback — NBC News</div>
+    <div class="video-embed-caption">A Day of Developing and Scanning Film at Home — Willem Verbeeck</div>
   </div>
 
   <!-- ============ 06 — WHAT CONSUMERS WANT ============ -->
@@ -1137,9 +1322,9 @@
     </div>
 
     <div class="video-embed">
-      <iframe src="https://www.youtube.com/embed/VUFr3b2mSLk" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      <iframe src="https://www.youtube.com/embed/eVrmFgvEnAA" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
     </div>
-    <div class="video-embed-caption">Why camera companies are failing — Tony Northrup</div>
+    <div class="video-embed-caption">What Happened to Kodak? — Company Man</div>
   </div>
 
   <!-- ============ 08 — BUSINESS OPPORTUNITY ============ -->
@@ -1199,54 +1384,344 @@
     </div>
   </div>
 
-  <!-- ============ 09 — SOURCE MATERIAL ============ -->
+  <!-- ============ 09 — CAMERA AESTHETICS ============ -->
   <div class="section">
-    <div class="section-label">09 — Source material</div>
+    <div class="section-label">09 — Camera design &amp; aesthetics</div>
+    <div class="section-title">The visual evolution of the camera</div>
+    <p class="narrative">Camera design is not decoration. The form factor, materials, and interaction model define who picks up the camera and how they feel using it. Every era of camera design encoded a set of assumptions about who the user is. Those assumptions are the key to understanding why the current market is stuck.</p>
+
+    <div class="era-grid">
+      <div class="era-card">
+        <div class="era-dates">1900s–1930s</div>
+        <div class="era-name">The box</div>
+        <div class="era-ref">Kodak Brownie, Kodak No. 2</div>
+        <div class="era-body">Simple wooden or cardboard boxes with a lens and a shutter. No viewfinder, no controls. The design said: anyone can do this. Materials were cheap. The aesthetic was democratic — photography as folk activity, not craft.</div>
+      </div>
+      <div class="era-card">
+        <div class="era-dates">1930s–1960s</div>
+        <div class="era-name">Precision instrument</div>
+        <div class="era-ref">Leica III, Nikon S2, Hasselblad 500C</div>
+        <div class="era-body">Machined brass, chrome plating, vulcanite leather. Cameras became jewel-like objects, hand-assembled in small workshops. The Leica M3 (1954) is still considered one of the most beautiful objects ever manufactured. Design said: this is a serious instrument for serious people. Materials communicated permanence.</div>
+      </div>
+      <div class="era-card dark">
+        <div class="era-dates">1960s–1980s</div>
+        <div class="era-name">The black professional tool</div>
+        <div class="era-ref">Nikon F, Canon F-1, Pentax 67</div>
+        <div class="era-body">SLR design matured into the "black body + silver dials" archetype that still defines what people think a "real camera" looks like. Increasingly electronic, increasingly plastic. The Nikon F became the photojournalist's icon — battered, taped, functional. Design said: tool first, object second. This era created the perception that cameras are for experts.</div>
+      </div>
+      <div class="era-card">
+        <div class="era-dates">1970s–1990s</div>
+        <div class="era-name">Compact elegance</div>
+        <div class="era-ref">Olympus XA, Contax T2, Ricoh GR1</div>
+        <div class="era-body">A counter-movement: serious cameras that fit in a pocket. The Olympus XA (1979) was a design revolution — a clamshell rangefinder smaller than a cigarette pack. The Contax T2 used titanium and Zeiss glass to prove that small didn't mean cheap. These cameras proved that the best design makes the camera disappear into your life.</div>
+      </div>
+      <div class="era-card">
+        <div class="era-dates">2000s–2015</div>
+        <div class="era-name">Digital generic</div>
+        <div class="era-ref">Canon PowerShot, Sony Cyber-shot, Nikon Coolpix</div>
+        <div class="era-body">The dark age of camera design. Millions of interchangeable silver and black plastic compacts with tiny sensors and zoom lenses. No character, no identity, no reason to exist once phones got cameras. Design said nothing. These cameras had no soul, and consumers sensed it. The market collapsed because the products deserved to die.</div>
+      </div>
+      <div class="era-card dark">
+        <div class="era-dates">2015–present</div>
+        <div class="era-name">Nostalgia + identity</div>
+        <div class="era-ref">Fujifilm X100, Nikon Zf, Leica Q3</div>
+        <div class="era-body">The surviving camera market has split into two aesthetics: retro-analog (Fuji, Nikon Zf) that references the precision instrument era with physical dials and leather, and minimal-modern (Leica Q3, Sigma fp) that strips away everything unnecessary. Both sell cameras as identity objects. The X100VI became a fashion accessory. The Nikon Zf references the FM2. Design now says: this camera is who you are.</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <div class="callout-label">Design insight for Kinship</div>
+      <p>The two design languages that survive — retro-analog and minimal-modern — both assume the user is a photographer. Fuji's dials assume you know what aperture is. Leica's minimalism assumes you appreciate restraint because you've used complex cameras.</p>
+      <p>Nobody is designing a camera for people who have <strong>never owned a camera</strong>. Not retro (no nostalgia to reference) and not minimal-tool (no expertise to appreciate the reduction). Something new. A third language. A camera that communicates the way the iPhone communicates: <strong>this is for you, and you already know how to use it</strong>.</p>
+    </div>
+  </div>
+
+  <!-- ============ 10 — COMPETITIVE LANDSCAPE ============ -->
+  <div class="section">
+    <div class="section-label">10 — The competitive landscape</div>
+    <div class="section-title">What's on the market and what it costs</div>
+    <p class="narrative">The premium compact and niche camera market is small, growing, and dramatically underserved. Here is every product that competes for the consumer Kinship is targeting — and why none of them are the answer.</p>
+
+    <table class="comp-table">
+      <tr>
+        <th>Camera</th>
+        <th>Price</th>
+        <th>Sensor</th>
+        <th>Lens</th>
+        <th>Est. units/year</th>
+        <th>Verdict</th>
+      </tr>
+      <tr class="comp-highlight">
+        <td>
+          <div class="comp-name">Fujifilm X100VI</div>
+          <div class="comp-sub">The "it" camera of 2024–25</div>
+        </td>
+        <td>$1,599</td>
+        <td>40 MP APS-C</td>
+        <td>23mm f/2 (35mm eq.)</td>
+        <td>200–400K (supply limited)</td>
+        <td>Closest competitor. Months-long waitlist. But still an enthusiast camera — complex menus, RAW workflow, manual controls.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="comp-name">Ricoh GR IIIx</div>
+          <div class="comp-sub">Street photography cult camera</div>
+        </td>
+        <td>$999</td>
+        <td>24 MP APS-C</td>
+        <td>26mm f/2.8 (40mm eq.)</td>
+        <td>50–80K</td>
+        <td>Pocketable. Minimal. No viewfinder. Cult following but zero brand awareness outside enthusiasts. Terrible WiFi transfer.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="comp-name">Sony ZV-1 II</div>
+          <div class="comp-sub">Vlogger camera</div>
+        </td>
+        <td>$898</td>
+        <td>20 MP 1-inch</td>
+        <td>18–50mm f/1.8–4.0 zoom</td>
+        <td>100–200K</td>
+        <td>Designed for video creators, not photographers. Small sensor. Flip screen. Built for YouTube, not life.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="comp-name">Leica Q3</div>
+          <div class="comp-sub">Luxury fixed-lens</div>
+        </td>
+        <td>$5,995</td>
+        <td>60 MP full-frame</td>
+        <td>28mm f/1.7</td>
+        <td>30–60K</td>
+        <td>Stunning image quality. Stunning price. A luxury product, not a consumer product. Proves the thesis at the wrong price.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="comp-name">Canon PowerShot V10</div>
+          <div class="comp-sub">Ultra-compact vlogger</div>
+        </td>
+        <td>$429</td>
+        <td>20 MP 1-inch</td>
+        <td>19mm f/2.8 (wide)</td>
+        <td>Low</td>
+        <td>Canon's attempt at a simple camera. Underpowered, poor reception. Proves Canon can't think outside the enthusiast box.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="comp-name">Fujifilm Instax Mini 12</div>
+          <div class="comp-sub">Instant film camera</div>
+        </td>
+        <td>$79</td>
+        <td>N/A (film)</td>
+        <td>60mm f/12.7</td>
+        <td>10–15M (all Instax)</td>
+        <td>Terrible image quality. Massive demand. Proves that experience &gt; specs. $1/print recurring revenue. The aspirational comp for what Kinship should feel like.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="comp-name">Sigma fp</div>
+          <div class="comp-sub">Pocketable full-frame</div>
+        </td>
+        <td>$1,899</td>
+        <td>24 MP full-frame</td>
+        <td>Interchangeable (L-mount)</td>
+        <td>Low</td>
+        <td>Radically minimal body. Beautiful design. But interchangeable lens = complexity. No built-in viewfinder. A filmmaker's tool, not a consumer camera.</td>
+      </tr>
+    </table>
+
+    <div class="section-title" style="font-size: 18px; margin-top: 40px;">Price positioning map</div>
+    <p class="narrative">Where Kinship sits relative to the market.</p>
+
+    <div class="price-map">
+      <div class="price-tier-row">
+        <div class="price-tier-label">$50–200</div>
+        <div class="price-tier-items">
+          <span class="price-tier-chip">Instax Mini 12 ($79)</span>
+          <span class="price-tier-chip">Instax Wide 400 ($130)</span>
+        </div>
+      </div>
+      <div class="price-tier-row">
+        <div class="price-tier-label">$400–900</div>
+        <div class="price-tier-items">
+          <span class="price-tier-chip">Canon V10 ($429)</span>
+          <span class="price-tier-chip">Sony ZV-1 II ($898)</span>
+          <span class="price-tier-chip">Ricoh GR III ($899)</span>
+        </div>
+      </div>
+      <div class="price-tier-row">
+        <div class="price-tier-label">$900–1,800</div>
+        <div class="price-tier-items">
+          <span class="price-tier-chip">Ricoh GR IIIx ($999)</span>
+          <span class="price-tier-chip kinship">Kinship ($???)</span>
+          <span class="price-tier-chip">Fujifilm X100VI ($1,599)</span>
+          <span class="price-tier-chip">Sigma fp ($1,899)</span>
+        </div>
+      </div>
+      <div class="price-tier-row">
+        <div class="price-tier-label">$3,000+</div>
+        <div class="price-tier-items">
+          <span class="price-tier-chip">Pixii ($3,500)</span>
+          <span class="price-tier-chip">Leica Q3 ($5,995)</span>
+          <span class="price-tier-chip">Hasselblad X2D ($8,199)</span>
+          <span class="price-tier-chip">Leica M11 ($8,995)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="font-size: 18px; margin-top: 40px;">Camera startup graveyard (and survivors)</div>
+    <p class="narrative">Every startup that has tried to build a new consumer camera, and what happened. The pattern is consistent: they win on technology and lose on experience, distribution, or manufacturing.</p>
+
+    <div class="startup-grid">
+      <div class="startup-card">
+        <div class="startup-status dead">Defunct — 2018</div>
+        <div class="startup-name">Lytro</div>
+        <div class="startup-body">Light field camera. Raised $200M. Refocus after capture was real but images were mediocre. Pivoted to cinema, shut down, acquired by Google. <strong>Lesson:</strong> novel physics without image quality is a demo, not a product.</div>
+      </div>
+      <div class="startup-card">
+        <div class="startup-status dead">Defunct — 2020</div>
+        <div class="startup-name">Light L16</div>
+        <div class="startup-body">16-lens computational camera. Raised $65M. Launched at $1,950. Inconsistent image quality. Pivoted to automotive, shut down. <strong>Lesson:</strong> computational photography needs great optics to start with, not replace them.</div>
+      </div>
+      <div class="startup-card">
+        <div class="startup-status dead">Effectively dead</div>
+        <div class="startup-name">Zeiss ZX1</div>
+        <div class="startup-body">Full-frame compact with built-in Lightroom. Announced 2018, shipped in tiny quantities at $6,000. Beautiful industrial design, poor execution. <strong>Lesson:</strong> a camera company needs to ship at volume, not as a concept car.</div>
+      </div>
+      <div class="startup-card">
+        <div class="startup-status alive">Active — niche</div>
+        <div class="startup-name">Pixii</div>
+        <div class="startup-body">French digital rangefinder. APS-C, M-mount, no rear screen — uses phone app as viewfinder. ~$3,500. Hundreds of units/year. <strong>Most relevant comp to Kinship's phone-connected model.</strong> But priced for Leica collectors, not consumers.</div>
+      </div>
+      <div class="startup-card">
+        <div class="startup-status alive">Active — struggling</div>
+        <div class="startup-name">Alice Camera</div>
+        <div class="startup-body">AI-powered Micro Four Thirds camera for content creators. Kickstarter 2020, repeatedly delayed. Phone as primary screen. Target ~$750. Demonstrates how hard hardware startups are. Not yet shipping at scale.</div>
+      </div>
+      <div class="startup-card">
+        <div class="startup-status dead">Failed — 2018</div>
+        <div class="startup-name">Yashica Y35</div>
+        <div class="startup-body">Kickstarter "digiFilm" concept camera. Licensed brand name, not a real company. Widely panned as near-scam quality. <strong>Lesson:</strong> nostalgia without substance is fraud. Brand alone is not enough.</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <div class="callout-label">Pattern from the graveyard</div>
+      <p>Every failed camera startup made the same mistake: <strong>they led with technology</strong>. Lytro led with light fields. Light led with multi-aperture computation. Zeiss led with built-in Lightroom. None of them asked: what does the consumer actually want to feel when they use this?</p>
+      <p>The survivors (Pixii, Alice) are alive but tiny because they're building for existing camera enthusiasts, not creating new ones. Kinship must do what none of these companies did: <strong>build for the person who has never bought a camera</strong>.</p>
+    </div>
+  </div>
+
+  <!-- ============ 11 — MANUFACTURING ============ -->
+  <div class="section">
+    <div class="section-label">11 — Manufacturing reality</div>
+    <div class="section-title">What it takes to build a camera</div>
+    <p class="narrative">Building a camera is among the hardest hardware challenges a startup can attempt. The supply chain is concentrated, the precision requirements are extreme, and the incumbents have 50+ years of manufacturing infrastructure. Understanding these constraints is essential to planning a viable path to production.</p>
+
+    <div class="card-grid-2">
+      <div class="card">
+        <div class="card-tag">Most critical</div>
+        <div class="card-name">Image sensor</div>
+        <div class="card-body"><strong>Sony Semiconductor</strong> dominates with 50–60% of all image sensors globally. Samsung and OmniVision are alternatives. Sensor procurement is the single most constrained component for a startup. Sony's best sensors (IMX989, IMX585) are allocated to established OEMs ordering millions of units. A startup ordering 5,000 units is at the bottom of the priority list. Lead times: 12–26 weeks.</div>
+        <div class="card-verdict">Kinship: see Sensor Study for our procurement strategy</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">Highest cost</div>
+        <div class="card-name">Lens elements</div>
+        <div class="card-body">Precision optical glass manufacturing requires custom mold tooling at <strong>$500K–$2M+</strong>. Major suppliers: Canon (in-house), Tamron, Tokina. A fixed-lens camera needs a custom optical design — this is specialized work requiring experienced optical engineers. Off-the-shelf modules exist but limit image quality. The lens is what separates a real camera from a phone accessory.</div>
+        <div class="card-verdict">Kinship: custom optics is non-negotiable for our quality bar</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">$10M+ to develop custom</div>
+        <div class="card-name">Image processor / ISP</div>
+        <div class="card-body">Canon (DIGIC), Sony (BIONZ), Fujifilm (X-Processor) all have custom ASICs. Developing a custom ISP from scratch costs $10M+. Startups use off-the-shelf: <strong>Ambarella</strong> (action cameras, drones), <strong>Qualcomm</strong> (mobile-derived), or FPGA prototypes. The ISP defines the image character — Fuji's film simulations live in their X-Processor.</div>
+        <div class="card-verdict">Kinship: ML-first processing on mobile silicon is our wedge</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">$200K–$1M tooling</div>
+        <div class="card-name">Body / housing</div>
+        <div class="card-body">Die-cast magnesium alloy (premium) or injection-molded engineering plastic. CNC machining for prototypes, injection molding for production. Tooling costs: <strong>$200K–$1M+</strong> depending on complexity. The body is the first thing a consumer touches — material choice is a design decision as much as an engineering one. Titanium (Contax T2, Leica) signals permanence.</div>
+        <div class="card-verdict">Kinship: body material is a brand statement</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <div class="callout-label">Manufacturing path</div>
+      <p><strong>ODM partners</strong> (Asia Optical, Ability Opto-Electronics) can handle design-through-manufacturing for a camera. Minimum first production run: 5,000–10,000 units. Fully custom (own design, own tooling): expect <strong>$3–10M in pre-production costs</strong> before a single unit ships.</p>
+      <p><strong>Timeline</strong>: from final design freeze to first production units: 12–18 months. Optical elements have the longest lead time. Assembly typically in Japan (premium), China (consumer), or Thailand.</p>
+      <p>For context: the Zeiss ZX1 took 3+ years from announcement to shipping. The Pixii took 2 years. Alice Camera is 4+ years in and still not at volume. <strong>Hardware is hard. Camera hardware is harder.</strong></p>
+    </div>
+
+    <div class="stat-row" style="margin-top: 24px;">
+      <div class="stat-block">
+        <div class="stat-number">~8.5M</div>
+        <div class="stat-label">total digital cameras shipped globally (2024, CIPA)</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">~$950</div>
+        <div class="stat-label">average selling price, up from $810 in 2022</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">95%</div>
+        <div class="stat-label">market share held by Japanese manufacturers</div>
+      </div>
+    </div>
+
+    <div class="decision" style="margin-top: 24px;">
+      <div class="decision-q">Manufacturing strategy</div>
+      <p>The path for Kinship is <strong>ODM partnership for v0, with custom optics</strong>. Use off-the-shelf silicon (Ambarella or Qualcomm), source a Sony sensor through distribution (not direct), and invest the design budget in the lens and body. Custom ISP is a v2 problem. Getting to market is a v1 problem.</p>
+      <p>Total pre-production budget estimate: <strong>$3–5M</strong> for a first run of 5,000–10,000 units.</p>
+    </div>
+  </div>
+
+  <!-- ============ 12 — SOURCE MATERIAL ============ -->
+  <div class="section">
+    <div class="section-label">12 — Source material</div>
     <div class="section-title">Videos and references</div>
     <p class="narrative">Curated source material that informed this study. Longer-form pieces that provide deeper context on the camera landscape, cultural shifts, and market dynamics.</p>
 
     <div class="video-grid">
       <div class="video-card">
         <div class="video-embed">
-          <iframe src="https://www.youtube.com/embed/yMeSw00n3Ac" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <iframe src="https://www.youtube.com/embed/Lo_1pyQ7xvc" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
         </div>
-        <div class="video-card-title">Analog photography in the digital age</div>
-        <div class="video-card-desc">Why young people are returning to film cameras and what it means for the future of photography as a medium.</div>
+        <div class="video-card-title">SX-70 — Eames Office (1972)</div>
+        <div class="video-card-desc">The original Eames documentary on the Polaroid SX-70. How Edwin Land's obsession with instant photography created a design icon.</div>
       </div>
       <div class="video-card">
         <div class="video-embed">
-          <iframe src="https://www.youtube.com/embed/1rMJCx05gLY" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <iframe src="https://www.youtube.com/embed/88kd9tVwkH8" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
         </div>
-        <div class="video-card-title">The death of the point-and-shoot</div>
-        <div class="video-card-desc">How smartphone cameras systematically dismantled the compact camera market between 2010 and 2020.</div>
+        <div class="video-card-title">Is the iPhone Camera Getting Worse? — MKBHD</div>
+        <div class="video-card-desc">The tension between computational photography and natural image rendering. What happens when software overrides physics.</div>
       </div>
       <div class="video-card">
         <div class="video-embed">
-          <iframe src="https://www.youtube.com/embed/eA3DhBbpec4" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <iframe src="https://www.youtube.com/embed/AdDIy0c5ZGo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
         </div>
-        <div class="video-card-title">The Polaroid SX-70 story</div>
-        <div class="video-card-desc">How Edwin Land's obsession with instant photography created a design icon and a new way of seeing.</div>
+        <div class="video-card-title">Why Fujifilm Survived (and Kodak Didn't) — Asianometry</div>
+        <div class="video-card-desc">The strategic pivot that saved Fujifilm from Kodak's fate. A case study in why incumbents fail and what it takes to survive a platform shift.</div>
       </div>
       <div class="video-card">
         <div class="video-embed">
-          <iframe src="https://www.youtube.com/embed/5N1CnwGBmp0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <iframe src="https://www.youtube.com/embed/eVrmFgvEnAA" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
         </div>
-        <div class="video-card-title">Apple's camera strategy</div>
-        <div class="video-card-desc">The evolution of iPhone camera hardware and Apple's computational photography approach from 2007 to present.</div>
+        <div class="video-card-title">What Happened to Kodak? — Company Man</div>
+        <div class="video-card-desc">The full story of Kodak's rise and collapse. How the company that invented digital photography was destroyed by it.</div>
       </div>
       <div class="video-card">
         <div class="video-embed">
-          <iframe src="https://www.youtube.com/embed/BLKsMK0rEfI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <iframe src="https://www.youtube.com/embed/8FpPSMIB4uA" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
         </div>
-        <div class="video-card-title">Why Fujifilm succeeded where Kodak failed</div>
-        <div class="video-card-desc">The strategic pivot that saved Fujifilm from Kodak's fate, and how it positioned them for the camera market's future.</div>
+        <div class="video-card-title">Reviewing EVERY iPhone Ever — MKBHD</div>
+        <div class="video-card-desc">The full iPhone lineage from 2007 to present, with camera performance as a throughline. How each generation pushed the boundary.</div>
       </div>
       <div class="video-card">
         <div class="video-embed">
-          <iframe src="https://www.youtube.com/embed/C8qsPLjVJXU" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <iframe src="https://www.youtube.com/embed/75oM7hOsx_4" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
         </div>
-        <div class="video-card-title">The Innovator's Dilemma in cameras</div>
-        <div class="video-card-desc">Why Canon and Nikon can't build the camera that consumers want — and what disruption theory says about what comes next.</div>
+        <div class="video-card-title">The Rise and Fall of Polaroid — Todd Dominey</div>
+        <div class="video-card-desc">Edwin Land, instant photography, and how Polaroid went from industry-defining to bankrupt. Parallels to today's camera incumbents.</div>
       </div>
     </div>
 
