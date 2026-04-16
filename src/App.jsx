@@ -399,7 +399,7 @@ function PasswordGate({ open, onClose }) {
     e.preventDefault()
     if (value.toLowerCase().trim() === 'forbidden') {
       onClose()
-      window.open('/docs/kinship_?.pdf', '_blank')
+      window.open('/docs/Camera_byKinship.pdf', '_blank')
     } else {
       setError(true)
       setTimeout(() => setError(false), 1200)
@@ -799,6 +799,7 @@ export default function App({ variant = 'eden' }) {
             opacity={0.4}
             scale={10}
             blur={2.5}
+            frames={1}
           />
         )}
         <Environment preset="studio" background={false} />

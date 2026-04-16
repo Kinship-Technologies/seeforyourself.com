@@ -115,6 +115,9 @@ const LENS_ELEMENTS = [
   { z: -24.0, shift: 0.8, radius: 10.0 },   // front inner element
 ]
 
+// Preload model + Draco decoder immediately (runs at import time, before gate unlocks)
+useGLTF.preload('/models/talis_smooth.glb')
+
 // --------------- Device Model ---------------
 export default function DeviceModel() {
   const groupRef = useRef()
