@@ -521,13 +521,13 @@ function SiteGate({ onUnlock }) {
 }
 
 const liberationPhrases = [
-  { text: 'Technology for Liberation.' },
+  { text: 'Technology for Liberation' },
   { text: '解放のためのテクノロジー' },
-  { text: 'Technologie pour la libération.' },
-  { text: '.تكنولوجيا للتحرر', style: { fontFamily: "'Amiri', 'Times New Roman', serif", fontSize: 'clamp(32px, 7vw, 87px)', direction: 'rtl' } },
-  { text: '.טכנולוגיה לשחרור', style: { direction: 'rtl' } },
+  { text: 'Technologie pour la Libération' },
+  { text: 'تكنولوجيا للتحرر', style: { fontFamily: "'Amiri', 'Times New Roman', serif", fontSize: 'clamp(32px, 7vw, 87px)', direction: 'rtl' } },
+  { text: 'טכנולוגיה לשחרור', style: { direction: 'rtl' } },
   { text: '解放的技术' },
-  { text: 'Tecnología para la liberación.' },
+  { text: 'Tecnología para la Liberación' },
   { text: '해방을 위한 기술' },
   { text: 'मुक्ति के लिए प्रौद्योगिकी' },
 ]
